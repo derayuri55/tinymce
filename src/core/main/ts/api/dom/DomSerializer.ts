@@ -10,14 +10,14 @@
 
 import { Fun } from '@ephox/katamari';
 import { Merger } from '@ephox/katamari';
-import Events from '../api/Events';
+import Events from '../Events';
 import DOMUtils from './DOMUtils';
-import DomSerializerFilters from './DomSerializerFilters';
-import DomSerializerPreProcess from './DomSerializerPreProcess';
+import DomSerializerFilters from '../../dom/DomSerializerFilters';
+import DomSerializerPreProcess from '../../dom/DomSerializerPreProcess';
 import DomParser from '../html/DomParser';
 import Schema from '../html/Schema';
 import Serializer from '../html/Serializer';
-import Zwsp from '../text/Zwsp';
+import Zwsp from '../../text/Zwsp';
 import Tools from '../util/Tools';
 
 const addTempAttr = function (htmlParser, tempAttrs, name) {
@@ -55,18 +55,18 @@ const parseHtml = function (htmlParser, dom, html, args) {
   return rootNode;
 };
 
-const serializeNode = function (settings, schema, node) {
+const serializeNode = function (settings, schema: Schema, node) {
   const htmlSerializer = Serializer(settings, schema);
   return htmlSerializer.serialize(node);
 };
 
-const toHtml = function (editor, settings, schema, rootNode, args) {
+const toHtml = function (editor, settings, schema: Schema, rootNode, args) {
   const content = serializeNode(settings, schema, rootNode);
   return postProcess(editor, args, content);
 };
 
 export default function (settings, editor) {
-  let dom, schema, htmlParser;
+  let dom, schema: Schema, htmlParser;
   const tempAttrs = ['data-mce-selected'];
 
   dom = editor && editor.dom ? editor.dom : DOMUtils.DOM;

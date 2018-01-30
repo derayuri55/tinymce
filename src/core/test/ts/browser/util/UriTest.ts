@@ -1,6 +1,6 @@
 import { LegacyUnit } from '@ephox/mcagar';
 import { Pipeline } from '@ephox/agar';
-import URI from 'tinymce/core/util/URI';
+import URI from 'tinymce/core/api/util/URI';
 import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.tinymce.core.util.UriTest', function () {
@@ -9,7 +9,7 @@ UnitTest.asynctest('browser.tinymce.core.util.UriTest', function () {
   const suite = LegacyUnit.createSuite();
 
   const ok = function (value, label?) {
-    console.log(value, label);
+    // console.log(value, label);
     return LegacyUnit.equal(value, true, label);
   };
 

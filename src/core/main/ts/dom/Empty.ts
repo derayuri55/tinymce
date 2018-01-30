@@ -14,7 +14,7 @@ import { Element } from '@ephox/sugar';
 import { SelectorExists } from '@ephox/sugar';
 import CaretCandidate from '../caret/CaretCandidate';
 import NodeType from './NodeType';
-import TreeWalker from './TreeWalker';
+import TreeWalker from '../api/dom/TreeWalker';
 
 const hasWhitespacePreserveParent = function (rootNode, node) {
   const rootElement = Element.fromDom(rootNode);
@@ -78,9 +78,7 @@ const isEmptyNode = function (targetNode) {
   }
 };
 
-const isEmpty = function (elm) {
-  return isEmptyNode(elm.dom());
-};
+const isEmpty = (elm) => isEmptyNode(elm.dom());
 
 export default {
   isEmpty

@@ -1,9 +1,9 @@
 import { LegacyUnit } from '@ephox/mcagar';
 import { Pipeline } from '@ephox/agar';
-import Env from 'tinymce/core/Env';
+import Env from 'tinymce/core/api/Env';
 import CaretWalker from 'tinymce/core/caret/CaretWalker';
 import CaretPosition from 'tinymce/core/caret/CaretPosition';
-import DomQuery from 'tinymce/core/dom/DomQuery';
+import DomQuery from 'tinymce/core/api/dom/DomQuery';
 import CaretAsserts from '../../module/test/CaretAsserts';
 import ViewBlock from '../../module/test/ViewBlock';
 import { UnitTest } from '@ephox/bedrock';
@@ -93,7 +93,7 @@ UnitTest.asynctest('browser.tinymce.core.CaretWalkerTest', function () {
   suite.test('from text to text across elements with siblings', function () {
     setupHtml('<p>abc<b><!-- x --></b></p><p><b><!-- x --></b></p><p><b><!-- x --></b>abc</p>');
     CaretAsserts.assertCaretPosition(logicalCaret.next(findTextPos('p:first', 3)), CaretPosition(findElm('p:last').lastChild, 0));
-    CaretAsserts.assertCaretPosition(logicalCaret.prev(CaretPosition(findElm('p:last').lastChild)), findTextPos('p:first', 3));
+    CaretAsserts.assertCaretPosition(logicalCaret.prev(CaretPosition(findElm('p:last').lastChild, 0)), findTextPos('p:first', 3));
   });
 
   suite.test('from input to text', function () {

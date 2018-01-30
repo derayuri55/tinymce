@@ -1,7 +1,7 @@
 import { Pipeline } from '@ephox/agar';
 import { LegacyUnit } from '@ephox/mcagar';
 import { TinyLoader } from '@ephox/mcagar';
-import Env from 'tinymce/core/Env';
+import Env from 'tinymce/core/api/Env';
 import Plugin from 'tinymce/plugins/lists/Plugin';
 import Theme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';
@@ -22,7 +22,7 @@ UnitTest.asynctest('tinymce.lists.browser.RemoveTest', function () {
     );
 
     editor.focus();
-    LegacyUnit.setSelection(editor, 'li');
+    LegacyUnit.setSelection(editor, 'li', 0);
     LegacyUnit.execCommand(editor, 'InsertUnorderedList');
 
     LegacyUnit.equal(editor.getContent(),
@@ -41,7 +41,7 @@ UnitTest.asynctest('tinymce.lists.browser.RemoveTest', function () {
     );
 
     editor.focus();
-    LegacyUnit.setSelection(editor, 'li');
+    LegacyUnit.setSelection(editor, 'li', 0);
     LegacyUnit.execCommand(editor, 'InsertUnorderedList');
 
     LegacyUnit.equal(editor.getContent(),
@@ -64,7 +64,7 @@ UnitTest.asynctest('tinymce.lists.browser.RemoveTest', function () {
     );
 
     editor.focus();
-    LegacyUnit.setSelection(editor, 'li');
+    LegacyUnit.setSelection(editor, 'li', 0);
     LegacyUnit.execCommand(editor, 'InsertUnorderedList');
 
     LegacyUnit.equal(editor.getContent(),

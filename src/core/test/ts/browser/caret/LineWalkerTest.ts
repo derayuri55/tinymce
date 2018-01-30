@@ -1,9 +1,9 @@
 import { LegacyUnit } from '@ephox/mcagar';
 import { Pipeline } from '@ephox/agar';
-import Env from 'tinymce/core/Env';
+import Env from 'tinymce/core/api/Env';
 import LineWalker from 'tinymce/core/caret/LineWalker';
 import CaretPosition from 'tinymce/core/caret/CaretPosition';
-import $ from 'tinymce/core/dom/DomQuery';
+import $ from 'tinymce/core/api/dom/DomQuery';
 import ViewBlock from '../../module/test/ViewBlock';
 import { UnitTest } from '@ephox/bedrock';
 
@@ -57,7 +57,7 @@ UnitTest.asynctest('browser.tinymce.core.LineWalkerTest', function () {
 
     $(getRoot()).html('<p>a</p><p>b</p><p>c</p>');
 
-    caretPosition = new CaretPosition(getRoot().lastChild.lastChild, 1);
+    caretPosition = CaretPosition(getRoot().lastChild.lastChild, 1);
     result = LineWalker.upUntil(getRoot(), predicate, caretPosition);
 
     LegacyUnit.equal(result.length, 3);
@@ -77,7 +77,7 @@ UnitTest.asynctest('browser.tinymce.core.LineWalkerTest', function () {
 
     $(getRoot()).html('<p>a</p><p>b</p><p>c</p>');
 
-    caretPosition = new CaretPosition(getRoot().firstChild.firstChild, 0);
+    caretPosition = CaretPosition(getRoot().firstChild.firstChild, 0);
     result = LineWalker.downUntil(getRoot(), predicate, caretPosition);
 
     LegacyUnit.equal(result.length, 3);

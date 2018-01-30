@@ -17,10 +17,10 @@ import CaretFinder from '../caret/CaretFinder';
 import CaretPosition from '../caret/CaretPosition';
 import DeleteUtils from './DeleteUtils';
 import MergeBlocks from './MergeBlocks';
-import ElementType from '../dom/ElementType';
-import { EditorSelection } from '../api/dom/Selection';
+import * as ElementType from '../dom/ElementType';
+import { Selection } from '../api/dom/Selection';
 
-const deleteRangeMergeBlocks = function (rootNode, selection: EditorSelection) {
+const deleteRangeMergeBlocks = function (rootNode, selection: Selection) {
   const rng = selection.getRng();
 
   return Options.liftN([

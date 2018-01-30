@@ -8,7 +8,8 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import DomSerializer from '../../dom/DomSerializer';
+import DomSerializer from './DomSerializer';
+import Schema from '../html/Schema';
 
 /**
  * This class is used to serialize DOM trees into a string. Consult the TinyMCE Wiki API for
@@ -27,7 +28,7 @@ export default function (settings, editor?) {
      *
      * @field {tinymce.html.Schema} schema
      */
-    schema: domSerializer.schema,
+    schema: domSerializer.schema as Schema,
 
     /**
      * Adds a node filter function to the parser used by the serializer, the parser will collect the specified nodes by name

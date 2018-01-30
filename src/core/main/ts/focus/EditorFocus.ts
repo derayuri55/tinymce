@@ -12,12 +12,12 @@ import { Option } from '@ephox/katamari';
 import { Compare } from '@ephox/sugar';
 import { Focus } from '@ephox/sugar';
 import { Element } from '@ephox/sugar';
-import Env from '../Env';
+import Env from '../api/Env';
 import CaretFinder from '../caret/CaretFinder';
-import ElementType from '../dom/ElementType';
+import * as ElementType from '../dom/ElementType';
 import RangeNodes from '../selection/RangeNodes';
 import SelectionBookmark from '../selection/SelectionBookmark';
-import { EditorSelection } from '../api/dom/Selection';
+import { Selection } from '../api/dom/Selection';
 
 const getContentEditableHost = function (editor, node) {
   return editor.dom.getParent(node, function (node) {
@@ -86,7 +86,7 @@ const hasFocus = function (editor) {
 };
 
 const focusEditor = function (editor) {
-  const selection: EditorSelection = editor.selection, contentEditable = editor.settings.content_editable;
+  const selection: Selection = editor.selection, contentEditable = editor.settings.content_editable;
   const body = editor.getBody();
   let contentEditableHost, rng = selection.getRng();
 

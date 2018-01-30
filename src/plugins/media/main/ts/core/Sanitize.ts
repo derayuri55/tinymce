@@ -8,9 +8,9 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import SaxParser from 'tinymce/core/html/SaxParser';
-import Schema from 'tinymce/core/html/Schema';
-import Writer from 'tinymce/core/html/Writer';
+import SaxParser from 'tinymce/core/api/html/SaxParser';
+import Schema from 'tinymce/core/api/html/Schema';
+import Writer from 'tinymce/core/api/html/Writer';
 import Settings from '../api/Settings';
 
 const sanitize = function (editor, html) {
@@ -21,7 +21,7 @@ const sanitize = function (editor, html) {
   const writer = Writer();
   let blocked;
 
-  new SaxParser({
+  SaxParser({
     validate: false,
     allow_conditional_comments: false,
     special: 'script,noscript',
