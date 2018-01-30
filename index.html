@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<body>
+	<textarea></textarea>
+
+	<script src="/js/tinymce/tinymce.min.js"></script>
+	<script>
+		tinymce.init({
+			selector: 'textarea',
+			branding: false,
+			height: 500,
+			theme: 'modern',
+			language: 'ja',
+			menubar: false,
+			plugins: 'print preview fullpage searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount colorpicker textpattern help',
+			toolbar1: 'formatselect | bold  forecolor backcolor | link | alignleft aligncenter alignright alignjustify | table',
+			image_advtab: true,
+			templates: [
+				{ title: 'Test template 1', content: 'Test 1' },
+				{ title: 'Test template 2', content: 'Test 2' }
+			],
+			style_formats: [
+				{
+					title: 'Image Left',
+					selector: 'img',
+					styles: {
+						'float': 'left',
+						'margin': '0 10px 0 10px'
+					}
+				},
+				{
+					title: 'Image Right',
+					selector: 'img',
+					styles: {
+						'float': 'right',
+						'margin': '0 0 10px 10px'
+					}
+				}
+			],
+			content_css: [
+				'//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+				'//www.tinymce.com/css/codepen.min.css'
+			],
+			images_upload_handler: function (blobInfo, success, failure) {
+				console.log(blobInfo, success, failure);
+			}
+		});
+	</script>
+</body>
+</html>
