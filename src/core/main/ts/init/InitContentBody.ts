@@ -8,9 +8,7 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Insert } from '@ephox/sugar';
-import { Element } from '@ephox/sugar';
-import { Attr } from '@ephox/sugar';
+import { Insert, Element, Attr } from '@ephox/sugar';
 import EditorUpload from '../api/EditorUpload';
 import ForceBlocks from '../ForceBlocks';
 import NodeChange from '../NodeChange';
@@ -20,7 +18,7 @@ import Formatter from '../api/Formatter';
 import Serializer from '../api/dom/Serializer';
 import CaretContainerInput from '../caret/CaretContainerInput';
 import DOMUtils from '../api/dom/DOMUtils';
-import Selection from '../api/dom/Selection';
+import { Selection } from '../api/dom/Selection';
 import DomParser from '../api/html/DomParser';
 import Node from '../api/html/Node';
 import Schema from '../api/html/Schema';

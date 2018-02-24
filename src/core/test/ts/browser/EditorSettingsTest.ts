@@ -1,14 +1,10 @@
-import { Assertions } from '@ephox/agar';
-import { GeneralSteps } from '@ephox/agar';
-import { Logger } from '@ephox/agar';
-import { Pipeline } from '@ephox/agar';
-import { Step } from '@ephox/agar';
+import { Assertions, GeneralSteps, Logger, Pipeline, Step } from '@ephox/agar';
 import { TinyLoader } from '@ephox/mcagar';
 import { PlatformDetection } from '@ephox/sand';
 import * as EditorSettings from 'tinymce/core/EditorSettings';
 import Theme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';
-import Editor from 'tinymce/core/api/Editor';
+import { Editor } from 'tinymce/core/api/Editor';
 import EditorManager from 'tinymce/core/api/EditorManager';
 
 UnitTest.asynctest('browser.tinymce.core.EditorSettingsTest', function () {

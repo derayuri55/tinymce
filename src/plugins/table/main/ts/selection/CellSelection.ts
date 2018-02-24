@@ -8,24 +8,17 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { InputHandlers } from '@ephox/darwin';
-import { SelectionAnnotation } from '@ephox/darwin';
-import { SelectionKeys } from '@ephox/darwin';
+import { InputHandlers, SelectionAnnotation, SelectionKeys } from '@ephox/darwin';
 import { Fun, Option, Struct } from '@ephox/katamari';
 import { TableLookup } from '@ephox/snooker';
-import { Compare } from '@ephox/sugar';
-import { Element } from '@ephox/sugar';
-import { Node } from '@ephox/sugar';
-import { Text } from '@ephox/sugar';
-import { Attr } from '@ephox/sugar';
-import { Traverse } from '@ephox/sugar';
-import { Selection } from '@ephox/sugar';
-import { SelectionDirection } from '@ephox/sugar';
+import {
+    Attr, Compare, Element, Node, Selection, SelectionDirection, Text, Traverse
+} from '@ephox/sugar';
+
 import Util from '../alien/Util';
 import Direction from '../queries/Direction';
 import Ephemera from './Ephemera';
-
-/*eslint no-bitwise:0 */
+import { getForcedRootBlock, getForcedRootBlockAttrs } from '../api/Settings';
 
 export default function (editor, lazyResize) {
   const handlerStruct = Struct.immutableBag(['mousedown', 'mouseover', 'mouseup', 'keyup', 'keydown'], []);
@@ -56,8 +49,14 @@ export default function (editor, lazyResize) {
 
     const mouseHandlers = InputHandlers.mouse(win, body, isRoot, annotations);
     const keyHandlers = InputHandlers.keyboard(win, body, isRoot, annotations);
+    const hasShiftKey = (event) => event.raw().shiftKey === true;
 
     const handleResponse = function (event, response) {
+      // Only handle shift key non shiftkey cell navigation is handled by core
+      if (!hasShiftKey(event)) {
+        return;
+      }
+
       if (response.kill()) {
         event.kill();
       }
@@ -110,11 +109,11 @@ export default function (editor, lazyResize) {
       if (event.which === 40) {
         getLast().each(function (last) {
           if (Node.name(last) === 'table') {
-            if (editor.settings.forced_root_block) {
+            if (getForcedRootBlock(editor)) {
               editor.dom.add(
                 editor.getBody(),
-                editor.settings.forced_root_block,
-                editor.settings.forced_root_block_attrs,
+                getForcedRootBlock(editor),
+                getForcedRootBlockAttrs(editor),
                 '<br/>'
               );
             } else {

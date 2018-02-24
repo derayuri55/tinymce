@@ -8,9 +8,8 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Option } from '@ephox/katamari';
-import { Struct } from '@ephox/katamari';
-import CaretContainer from '../caret/CaretContainer';
+import { Option, Struct } from '@ephox/katamari';
+import * as CaretContainer from '../caret/CaretContainer';
 import NodeType from '../dom/NodeType';
 import TreeWalker from '../api/dom/TreeWalker';
 import CaretFormat from '../fmt/CaretFormat';

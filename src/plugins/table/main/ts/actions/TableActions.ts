@@ -8,20 +8,16 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr } from '@ephox/katamari';
-import { Fun } from '@ephox/katamari';
-import { Option } from '@ephox/katamari';
-import { CellMutations } from '@ephox/snooker';
-import { TableDirection } from '@ephox/snooker';
-import { TableFill } from '@ephox/snooker';
-import { TableGridSize } from '@ephox/snooker';
-import { TableOperations } from '@ephox/snooker';
-import { Element } from '@ephox/sugar';
-import { Node } from '@ephox/sugar';
-import { Attr } from '@ephox/sugar';
-import { SelectorFilter } from '@ephox/sugar';
+import { Arr, Fun, Option } from '@ephox/katamari';
+import {
+    CellMutations, TableDirection, TableFill, TableGridSize, TableOperations
+} from '@ephox/snooker';
+import { Attr, Element, Node, SelectorFilter } from '@ephox/sugar';
+
 import Util from '../alien/Util';
 import Direction from '../queries/Direction';
+import { getCloneElements } from '../api/Settings';
+import { fireNewCell, fireNewRow } from '../api/Events';
 
 export default function (editor, lazyWire) {
   const isTableBody = function (editor) {
@@ -38,30 +34,8 @@ export default function (editor, lazyWire) {
     return isTableBody(editor) === false || size.columns() > 1;
   };
 
-  const fireNewRow = function (node) {
-    editor.fire('newrow', {
-      node: node.dom()
-    });
-    return node.dom();
-  };
-
-  const fireNewCell = function (node) {
-    editor.fire('newcell', {
-      node: node.dom()
-    });
-    return node.dom();
-  };
-
-  let cloneFormatsArray;
-  if (editor.settings.table_clone_elements !== false) {
-    if (typeof editor.settings.table_clone_elements === 'string') {
-      cloneFormatsArray = editor.settings.table_clone_elements.split(/[ ,]/);
-    } else if (Array.isArray(editor.settings.table_clone_elements)) {
-      cloneFormatsArray = editor.settings.table_clone_elements;
-    }
-  }
   // Option.none gives the default cloneFormats.
-  const cloneFormats = Option.from(cloneFormatsArray);
+  const cloneFormats = getCloneElements(editor);
 
   const execute = function (operation, guard, mutate, lazyWire) {
     return function (table, target) {
@@ -75,10 +49,10 @@ export default function (editor, lazyWire) {
       const generators = TableFill.cellOperations(mutate, doc, cloneFormats);
       return guard(table) ? operation(wire, table, target, generators, direction).bind(function (result) {
         Arr.each(result.newRows(), function (row) {
-          fireNewRow(row);
+          fireNewRow(editor, row.dom());
         });
         Arr.each(result.newCells(), function (cell) {
-          fireNewCell(cell);
+          fireNewCell(editor, cell.dom());
         });
         return result.cursor().map(function (cell) {
           const rng = editor.dom.createRng();

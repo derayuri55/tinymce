@@ -1,9 +1,9 @@
 import { Pipeline } from '@ephox/agar';
-import { LegacyUnit } from '@ephox/mcagar';
-import { TinyLoader } from '@ephox/mcagar';
+import { UnitTest } from '@ephox/bedrock';
+import { LegacyUnit, TinyLoader } from '@ephox/mcagar';
+
 import Plugin from 'tinymce/plugins/lists/Plugin';
 import Theme from 'tinymce/themes/modern/Theme';
-import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('tinymce.lists.browser.IndentTest', function () {
   const success = arguments[arguments.length - 2];
@@ -107,6 +107,38 @@ UnitTest.asynctest('tinymce.lists.browser.IndentTest', function () {
     );
 
     LegacyUnit.equal(editor.selection.getNode().nodeName, 'LI');
+  });
+
+  suite.test('Indent in table cell in table inside of list should not do anything', function (editor) {
+    editor.getBody().innerHTML = LegacyUnit.trimBrs(
+      '<ol>' +
+      '<li>' +
+      '<table>' +
+      '<tr>' +
+      '<td></td>' +
+      '</tr>' +
+      '</table>' +
+      '</li>' +
+      '</ol>'
+    );
+
+    editor.focus();
+    LegacyUnit.setSelection(editor, 'td', 0);
+    LegacyUnit.execCommand(editor, 'Indent');
+
+    LegacyUnit.equal(editor.getContent(),
+    '<ol>' +
+    '<li>' +
+    '<table>' +
+    '<tr>' +
+    '<td></td>' +
+    '</tr>' +
+    '</table>' +
+    '</li>' +
+    '</ol>'
+    );
+
+    LegacyUnit.equal(editor.selection.getNode().nodeName, 'TD');
   });
 
   suite.test('Indent last LI to same level as middle LI', function (editor) {
@@ -321,7 +353,7 @@ UnitTest.asynctest('tinymce.lists.browser.IndentTest', function () {
     entities: 'raw',
     valid_elements:
       'li[style|class|data-custom],ol[style|class|data-custom],' +
-      'ul[style|class|data-custom],dl,dt,dd,em,strong,span,#p,div,br',
+      'ul[style|class|data-custom],dl,dt,dd,em,strong,span,#p,div,br,table,tr,td',
     valid_styles: {
       '*': 'color,font-size,font-family,background-color,font-weight,' +
         'font-style,text-decoration,float,margin,margin-top,margin-right,' +

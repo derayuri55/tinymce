@@ -9,30 +9,26 @@
  */
 
 import { Arr } from '@ephox/katamari';
-import { Remove } from '@ephox/sugar';
-import { Element } from '@ephox/sugar';
-import { Attr } from '@ephox/sugar';
-import { SelectorFilter } from '@ephox/sugar';
-import { SelectorFind } from '@ephox/sugar';
+import { Remove, Element, Attr, SelectorFilter, SelectorFind } from '@ephox/sugar';
 import DragDropOverrides from './DragDropOverrides';
 import EditorView from './EditorView';
 import Env from './api/Env';
-import CaretContainer from './caret/CaretContainer';
+import * as CaretContainer from './caret/CaretContainer';
 import CaretPosition from './caret/CaretPosition';
-import CaretUtils from './caret/CaretUtils';
-import CaretWalker from './caret/CaretWalker';
-import FakeCaret from './caret/FakeCaret';
-import LineUtils from './caret/LineUtils';
+import * as CaretUtils from './caret/CaretUtils';
+import { CaretWalker } from './caret/CaretWalker';
+import * as LineUtils from './caret/LineUtils';
 import NodeType from './dom/NodeType';
 import RangePoint from './dom/RangePoint';
 import CefFocus from './focus/CefFocus';
-import CefUtils from './keyboard/CefUtils';
+import * as CefUtils from './keyboard/CefUtils';
 import VK from './api/util/VK';
+import { FakeCaret, isFakeCaretTarget } from './caret/FakeCaret';
 
-const isContentEditableTrue = NodeType.isContentEditableTrue,
-  isContentEditableFalse = NodeType.isContentEditableFalse,
-  isAfterContentEditableFalse = CaretUtils.isAfterContentEditableFalse,
-  isBeforeContentEditableFalse = CaretUtils.isBeforeContentEditableFalse;
+const isContentEditableTrue = NodeType.isContentEditableTrue;
+const isContentEditableFalse = NodeType.isContentEditableFalse;
+const isAfterContentEditableFalse = CaretUtils.isAfterContentEditableFalse;
+const isBeforeContentEditableFalse = CaretUtils.isBeforeContentEditableFalse;
 
 const SelectionOverrides = function (editor) {
   const isBlock = function (node) {
@@ -68,7 +64,7 @@ const SelectionOverrides = function (editor) {
     editor.selection.scrollIntoView(node, alignToTop);
   };
 
-  const showCaret = function (direction, node, before) {
+  const showCaret = (direction, node: HTMLElement, before: boolean): Range => {
     let e;
 
     e = editor.fire('ShowCaret', {
@@ -207,14 +203,19 @@ const SelectionOverrides = function (editor) {
 
     handleTouchSelect(editor);
 
-    editor.on('mousedown', function (e) {
+    editor.on('mousedown', (e: MouseEvent) => {
       let contentEditableRoot;
+      const targetElm = e.target as Element;
+
+      if (targetElm !== rootNode && targetElm.nodeName !== 'HTML' && !editor.dom.isChildOf(targetElm, rootNode)) {
+        return;
+      }
 
       if (EditorView.isXYInContentArea(editor, e.clientX, e.clientY) === false) {
         return;
       }
 
-      contentEditableRoot = getContentEditableRoot(e.target);
+      contentEditableRoot = getContentEditableRoot(targetElm);
       if (contentEditableRoot) {
         if (isContentEditableFalse(contentEditableRoot)) {
           e.preventDefault();
@@ -227,7 +228,7 @@ const SelectionOverrides = function (editor) {
             editor.selection.placeCaretAt(e.clientX, e.clientY);
           }
         }
-      } else {
+      } else if (isFakeCaretTarget(targetElm) === false) {
         // Remove needs to be called here since the mousedown might alter the selection without calling selection.setRng
         // and therefore not fire the AfterSetSelectionRange event.
         removeContentEditableSelection();
@@ -238,7 +239,7 @@ const SelectionOverrides = function (editor) {
           if (!hasBetterMouseTarget(e.target, caretInfo.node)) {
             e.preventDefault();
             editor.getBody().focus();
-            setRange(showCaret(1, caretInfo.node, caretInfo.before));
+            setRange(showCaret(1, caretInfo.node as HTMLElement, caretInfo.before));
           }
         }
       }
@@ -361,21 +362,21 @@ const SelectionOverrides = function (editor) {
         if (forward === false) {
           caretPosition = getNormalizedRangeEndPoint(-1, range);
 
-          if (isContentEditableFalse(caretPosition.getNode(true))) {
+          if (isFakeCaretTarget(caretPosition.getNode(true))) {
             return showCaret(-1, caretPosition.getNode(true), false);
           }
 
-          if (isContentEditableFalse(caretPosition.getNode())) {
+          if (isFakeCaretTarget(caretPosition.getNode())) {
             return showCaret(-1, caretPosition.getNode(), !caretPosition.isAtEnd());
           }
         } else {
           caretPosition = getNormalizedRangeEndPoint(1, range);
 
-          if (isContentEditableFalse(caretPosition.getNode())) {
+          if (isFakeCaretTarget(caretPosition.getNode())) {
             return showCaret(1, caretPosition.getNode(), !caretPosition.isAtEnd());
           }
 
-          if (isContentEditableFalse(caretPosition.getNode(true))) {
+          if (isFakeCaretTarget(caretPosition.getNode(true))) {
             return showCaret(1, caretPosition.getNode(true), false);
           }
         }

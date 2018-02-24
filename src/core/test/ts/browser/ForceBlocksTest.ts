@@ -1,6 +1,5 @@
 import { Pipeline } from '@ephox/agar';
-import { LegacyUnit } from '@ephox/mcagar';
-import { TinyLoader } from '@ephox/mcagar';
+import { LegacyUnit, TinyLoader } from '@ephox/mcagar';
 import HtmlUtils from '../module/test/HtmlUtils';
 import Theme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';
@@ -46,6 +45,20 @@ UnitTest.asynctest('browser.tinymce.core.ForceBlocksTest', function () {
     pressArrowKey(editor);
     LegacyUnit.equal(HtmlUtils.cleanHtml(editor.getBody().innerHTML), '<p>abcd</p><table><tbody><tr><td>x</td></tr></tbody></table>');
     LegacyUnit.equal(editor.selection.getNode().nodeName, 'P');
+  });
+
+  suite.test('Textnodes with only whitespace should not be wrapped new paragraph', (editor) => {
+    editor.getBody().innerHTML = '<p>a</p>      <p>b</p>\n<p>c</p>&nbsp;<p>d</p>      x<p>e</p>';
+    LegacyUnit.setSelection(editor, 'p', 0);
+    pressArrowKey(editor);
+    LegacyUnit.equal(HtmlUtils.cleanHtml(editor.getContent()), '<p>a</p><p>b</p><p>c</p><p>d</p><p>x</p><p>e</p>');
+  });
+
+  suite.test('Do not wrap whitespace textnodes between inline elements', (editor) => {
+    editor.getBody().innerHTML = 'a <strong>b</strong> <strong>c</strong>';
+    LegacyUnit.setSelection(editor, 'strong', 0);
+    pressArrowKey(editor);
+    LegacyUnit.equal(HtmlUtils.cleanHtml(editor.getContent()), '<p>a <strong>b</strong> <strong>c</strong></p>');
   });
 
   suite.test('Wrap root em in P but not table sibling', function (editor) {

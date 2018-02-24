@@ -55,7 +55,7 @@ module.exports = function (grunt) {
             name: 'tinymce',
             format: 'iife',
             banner: '(function () {',
-            footer: '})()',
+            footer: '})();',
             plugins: [
               swag.nodeResolve({
                 basedir: __dirname,
@@ -81,13 +81,15 @@ module.exports = function (grunt) {
             name: name,
             format: 'iife',
             banner: '(function () {',
-            footer: '})()',
+            footer: '})();',
             plugins: [
               swag.nodeResolve({
                 basedir: __dirname,
-                prefixes: {
+                prefixes: gruntUtils.prefixes({
                   'tinymce/core': 'lib/globals/tinymce/core'
-                }
+                }, [
+                  [`tinymce/plugins/${name}`, `lib/plugins/${name}/main/ts`]
+                ])
               }),
               swag.remapImports()
             ]
@@ -102,14 +104,16 @@ module.exports = function (grunt) {
             name: name,
             format: 'iife',
             banner: '(function () {',
-            footer: '})()',
+            footer: '})();',
             plugins: [
               swag.nodeResolve({
                 basedir: __dirname,
-                prefixes: {
+                prefixes: gruntUtils.prefixes({
                   'tinymce/core': 'lib/globals/tinymce/core',
                   'tinymce/ui': 'lib/ui/main/ts'
-                }
+                }, [
+                  [`tinymce/themes/${name}`, `lib/themes/${name}/main/ts`]
+                ])
               }),
               swag.remapImports()
             ]
@@ -486,6 +490,10 @@ module.exports = function (grunt) {
             zip.addData('package.json', jsonToBuffer({
               'name': 'tinymce',
               'version': packageData.version,
+              'repository': {
+                'type': 'git',
+                'url': 'https://github.com/tinymce/tinymce-dist.git'
+              },
               'description': 'Web based JavaScript HTML WYSIWYG editor control.',
               'author': 'Ephox Corporation',
               'main': 'tinymce.js',
@@ -498,7 +506,7 @@ module.exports = function (grunt) {
               'name': 'tinymce/tinymce',
               'version': packageData.version,
               'description': 'Web based JavaScript HTML WYSIWYG editor control.',
-              'license': ['LGPL-2.1'],
+              'license': ['LGPL-2.1-only'],
               'keywords': ['editor', 'wysiwyg', 'tinymce', 'richtext', 'javascript', 'html'],
               'homepage': 'http://www.tinymce.com',
               'type': 'component',
