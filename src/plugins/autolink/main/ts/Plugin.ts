@@ -10,9 +10,8 @@
 
 import PluginManager from 'tinymce/core/api/PluginManager';
 import Keys from './core/Keys';
-import { Editor } from 'tinymce/core/api/Editor';
 
-PluginManager.add('autolink', function (editor: Editor) {
+PluginManager.add('autolink', function (editor) {
   Keys.setup(editor);
 });
 

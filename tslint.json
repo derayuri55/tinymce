@@ -24,7 +24,6 @@
       "ban-types": false,
       "no-console": true,
       "no-bitwise": false,
-      "no-duplicate-imports": true,
       "no-namespace": false
     },
     "rulesDirectory": []

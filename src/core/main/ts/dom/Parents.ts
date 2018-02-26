@@ -9,7 +9,8 @@
  */
 
 import { Fun } from '@ephox/katamari';
-import { Compare, Traverse } from '@ephox/sugar';
+import { Compare } from '@ephox/sugar';
+import { Traverse } from '@ephox/sugar';
 
 const dropLast = function (xs) {
   return xs.slice(0, -1);

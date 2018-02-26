@@ -1,12 +1,14 @@
-import { GeneralSteps, Pipeline, RawAssertions, Step, Logger } from '@ephox/agar';
-import { UnitTest } from '@ephox/bedrock';
-import { TinyApis, TinyLoader } from '@ephox/mcagar';
-
-import URI from 'tinymce/core/api/util/URI';
+import { GeneralSteps } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
+import { RawAssertions } from '@ephox/agar';
+import { Step } from '@ephox/agar';
+import { TinyApis } from '@ephox/mcagar';
+import { TinyLoader } from '@ephox/mcagar';
 import Plugin from 'tinymce/plugins/imagetools/Plugin';
 import ModernTheme from 'tinymce/themes/modern/Theme';
-
+import URI from 'tinymce/core/api/util/URI';
 import ImageUtils from '../module/test/ImageUtils';
+import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.tinymce.plugins.imagetools.ImageToolsPluginTest', function () {
   const success = arguments[arguments.length - 2];
@@ -36,8 +38,8 @@ UnitTest.asynctest('browser.tinymce.plugins.imagetools.ImageToolsPluginTest', fu
   TinyLoader.setup(function (editor, onSuccess, onFailure) {
     const tinyApis = TinyApis(editor);
 
-    Pipeline.async({}, [
-      Logger.t('test generate filename', GeneralSteps.sequence([
+    const sTestGenerateFileName = function () {
+      return GeneralSteps.sequence([
         uploadHandlerState.sResetState,
         tinyApis.sSetSetting('images_reuse_filename', false),
         ImageUtils.sLoadImage(editor, srcUrl),
@@ -47,8 +49,11 @@ UnitTest.asynctest('browser.tinymce.plugins.imagetools.ImageToolsPluginTest', fu
         ImageUtils.sUploadImages(editor),
         uploadHandlerState.sWaitForState,
         sAssertUploadFilename('imagetools0.jpg')
-      ])),
-      Logger.t('test reuse filename', GeneralSteps.sequence([
+      ]);
+    };
+
+    const sTestReuseFilename = function () {
+      return GeneralSteps.sequence([
         uploadHandlerState.sResetState,
         tinyApis.sSetSetting('images_reuse_filename', true),
         ImageUtils.sLoadImage(editor, srcUrl),
@@ -59,16 +64,12 @@ UnitTest.asynctest('browser.tinymce.plugins.imagetools.ImageToolsPluginTest', fu
         uploadHandlerState.sWaitForState,
         sAssertUploadFilename('dogleft.jpg'),
         sAssertUri(srcUrl)
-      ])),
-      Logger.t('test rotate image', GeneralSteps.sequence([
-        ImageUtils.sLoadImage(editor, srcUrl, {width: 200, height: 100}),
-        tinyApis.sSelect('img', []),
-        ImageUtils.sExecCommand(editor, 'mceImageRotateRight'),
-        ImageUtils.sWaitForBlobImage(editor),
-        tinyApis.sAssertContentPresence({
-          'img[width="100"][height="200"]': 1
-        })
-      ]))
+      ]);
+    };
+
+    Pipeline.async({}, [
+      sTestGenerateFileName(),
+      sTestReuseFilename()
     ], onSuccess, onFailure);
   }, {
     plugins: 'imagetools',

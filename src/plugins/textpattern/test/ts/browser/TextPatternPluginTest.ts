@@ -1,13 +1,17 @@
-import {
-    ApproxStructure, Assertions, GeneralSteps, Keys, Logger, Pipeline, Step
-} from '@ephox/agar';
-import { UnitTest } from '@ephox/bedrock';
-import { TinyActions, TinyApis, TinyLoader } from '@ephox/mcagar';
-
+import { ApproxStructure } from '@ephox/agar';
+import { Assertions } from '@ephox/agar';
+import { GeneralSteps } from '@ephox/agar';
+import { Keys } from '@ephox/agar';
+import { Logger } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
+import { Step } from '@ephox/agar';
+import { TinyActions } from '@ephox/mcagar';
+import { TinyApis } from '@ephox/mcagar';
+import { TinyLoader } from '@ephox/mcagar';
 import TextpatternPlugin from 'tinymce/plugins/textpattern/Plugin';
-import Theme from 'tinymce/themes/modern/Theme';
-
 import Utils from '../module/test/Utils';
+import Theme from 'tinymce/themes/modern/Theme';
+import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.tinymce.plugins.textpattern.TextPatternPluginTest', function () {
   const success = arguments[arguments.length - 2];

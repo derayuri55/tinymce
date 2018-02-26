@@ -9,7 +9,6 @@
  */
 
 import DomUtils from './DomUtils';
-import UiContainer from 'tinymce/ui/UiContainer';
 
 /**
  * Movable mixin. Makes controls movable absolute and relative to other elements.
@@ -17,20 +16,17 @@ import UiContainer from 'tinymce/ui/UiContainer';
  * @mixin tinymce.ui.Movable
  */
 
-const isStatic = (elm: Element) => DomUtils.getRuntimeStyle(elm, 'position') === 'static';
-const isFixed = (ctrl) => ctrl.state.get('fixed');
-
 function calculateRelativePosition(ctrl, targetElm, rel) {
   let ctrlElm, pos, x, y, selfW, selfH, targetW, targetH, viewport, size;
 
-  viewport = getWindowViewPort();
+  viewport = DomUtils.getViewPort();
 
   // Get pos of target
-  pos = DomUtils.getPos(targetElm, UiContainer.getUiContainer(ctrl));
+  pos = DomUtils.getPos(targetElm);
   x = pos.x;
   y = pos.y;
 
-  if (isFixed(ctrl) && isStatic(document.body)) {
+  if (ctrl.state.get('fixed') && DomUtils.getRuntimeStyle(document.body, 'position') === 'static') {
     x -= viewport.x;
     y -= viewport.y;
   }
@@ -91,45 +87,6 @@ function calculateRelativePosition(ctrl, targetElm, rel) {
   };
 }
 
-const getUiContainerViewPort = (customUiContainer) => {
-  return {
-    x: 0,
-    y: 0,
-    w: customUiContainer.scrollWidth - 1,
-    h: customUiContainer.scrollHeight - 1
-  };
-};
-
-// It seems that people are relying on the fact that we contrain to the visible window viewport instead of the document viewport
-// const getDocumentViewPort = () => {
-//   return {
-//     x: Math.max(document.body.scrollLeft, document.documentElement.scrollLeft),
-//     y: Math.max(document.body.scrollTop, document.documentElement.scrollTop),
-//     w: Math.max(document.body.scrollWidth, document.documentElement.scrollWidth, document.defaultView.innerWidth),
-//     h: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.defaultView.innerHeight)
-//   };
-// };
-
-const getWindowViewPort = () => {
-  const win = window;
-  const x = Math.max(win.pageXOffset, document.body.scrollLeft, document.documentElement.scrollLeft);
-  const y = Math.max(win.pageYOffset, document.body.scrollTop, document.documentElement.scrollTop);
-  const w = win.innerWidth || document.documentElement.clientWidth;
-  const h = win.innerHeight || document.documentElement.clientHeight;
-
-  return {
-    x,
-    y,
-    w: x + w,
-    h: y + h
-  };
-};
-
-const getViewPortRect = (ctrl) => {
-  const customUiContainer = UiContainer.getUiContainer(ctrl);
-  return customUiContainer && !isFixed(ctrl) ? getUiContainerViewPort(customUiContainer) : getWindowViewPort();
-};
-
 export default {
   /**
    * Tests various positions to get the most suitable one.
@@ -140,17 +97,18 @@ export default {
    * @return {String} Best suitable relative position.
    */
   testMoveRel (elm, rels) {
-    const viewPortRect = getViewPortRect(this);
+    const viewPortRect = DomUtils.getViewPort();
 
     for (let i = 0; i < rels.length; i++) {
       const pos = calculateRelativePosition(this, elm, rels[i]);
 
-      if (isFixed(this)) {
+      if (this.state.get('fixed')) {
         if (pos.x > 0 && pos.x + pos.w < viewPortRect.w && pos.y > 0 && pos.y + pos.h < viewPortRect.h) {
           return rels[i];
         }
       } else {
-        if (pos.x > viewPortRect.x && pos.x + pos.w < viewPortRect.w && pos.y > viewPortRect.y && pos.y + pos.h < viewPortRect.h) {
+        if (pos.x > viewPortRect.x && pos.x + pos.w < viewPortRect.w + viewPortRect.x &&
+          pos.y > viewPortRect.y && pos.y + pos.h < viewPortRect.h + viewPortRect.y) {
           return rels[i];
         }
       }
@@ -218,23 +176,11 @@ export default {
     }
 
     if (self.settings.constrainToViewport) {
-      const viewPortRect = getViewPortRect(this);
+      const viewPortRect = DomUtils.getViewPort(window);
       const layoutRect = self.layoutRect();
 
-      x = constrain(x, viewPortRect.w, layoutRect.w);
-      y = constrain(y, viewPortRect.h, layoutRect.h);
-    }
-
-    const uiContainer = UiContainer.getUiContainer(self);
-    if (uiContainer && isStatic(uiContainer) && !isFixed(self)) {
-      x -= uiContainer.scrollLeft;
-      y -= uiContainer.scrollTop;
-    }
-
-    // We need to transpose by 1x1 on all browsers when using a ui container for some odd reason
-    if (uiContainer) {
-      x += 1;
-      y += 1;
+      x = constrain(x, viewPortRect.w + viewPortRect.x, layoutRect.w);
+      y = constrain(y, viewPortRect.h + viewPortRect.y, layoutRect.h);
     }
 
     if (self.state.get('rendered')) {

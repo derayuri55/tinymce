@@ -5,7 +5,7 @@ export default function () {
     style: 'position: absolute; right: 10px; top: 10px;'
   });
 
-  const attach = function (preventDuplicates?: boolean) {
+  const attach = function (preventDuplicates?) {
     if (preventDuplicates && domElm.parentNode === document.body) {
       detach();
     }
@@ -16,11 +16,11 @@ export default function () {
     DOMUtils.DOM.remove(domElm);
   };
 
-  const update = function (html: string) {
+  const update = function (html) {
     DOMUtils.DOM.setHTML(domElm, html);
   };
 
-  const get = function (): HTMLElement {
+  const get = function () {
     return domElm;
   };
 

@@ -33,11 +33,11 @@ import CaretPosition from './CaretPosition';
  * var caretPosition = CaretBookmark.resolve(bookmark);
  */
 
-const isText = NodeType.isText;
-const isBogus = NodeType.isBogus;
-const nodeIndex = DomUtils.nodeIndex;
+const isText = NodeType.isText,
+  isBogus = NodeType.isBogus,
+  nodeIndex = DomUtils.nodeIndex;
 
-const normalizedParent = (node: Node): Node => {
+const normalizedParent = function (node) {
   const parentNode = node.parentNode;
 
   if (isBogus(parentNode)) {
@@ -47,7 +47,7 @@ const normalizedParent = (node: Node): Node => {
   return parentNode;
 };
 
-const getChildNodes = (node: Node): Node[] => {
+const getChildNodes = function (node) {
   if (!node) {
     return [];
   }
@@ -63,21 +63,25 @@ const getChildNodes = (node: Node): Node[] => {
   }, []);
 };
 
-const normalizedTextOffset = (node: Node, offset: number): number => {
-  while ((node = node.previousSibling)) {
-    if (!isText(node)) {
+const normalizedTextOffset = function (textNode, offset) {
+  while ((textNode = textNode.previousSibling)) {
+    if (!isText(textNode)) {
       break;
     }
 
-    offset += node.data.length;
+    offset += textNode.data.length;
   }
 
   return offset;
 };
 
-const equal = (a) => (b) => a === b;
+const equal = function (targetValue) {
+  return function (value) {
+    return targetValue === value;
+  };
+};
 
-const normalizedNodeIndex = (node: Node): number => {
+const normalizedNodeIndex = function (node) {
   let nodes, index, numTextFragments;
 
   nodes = getChildNodes(normalizedParent(node));
@@ -235,7 +239,7 @@ const resolve = (root: Node, path: string): CaretPosition => {
   return findTextPosition(container, parseInt(offset, 10));
 };
 
-export {
+export default {
   /**
    * Create a xpath bookmark location for the specified caret position.
    *

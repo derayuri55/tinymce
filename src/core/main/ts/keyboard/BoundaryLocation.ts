@@ -8,9 +8,12 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Adt, Fun, Option, Options } from '@ephox/katamari';
+import { Adt } from '@ephox/katamari';
+import { Fun } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
+import { Options } from '@ephox/katamari';
 import CaretFinder from '../caret/CaretFinder';
-import * as CaretUtils from '../caret/CaretUtils';
+import CaretUtils from '../caret/CaretUtils';
 import CaretFormat from '../fmt/CaretFormat';
 import InlineUtils from './InlineUtils';
 import LazyEvaluator from '../util/LazyEvaluator';

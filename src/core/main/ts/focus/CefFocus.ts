@@ -9,7 +9,7 @@
  */
 
 import { Throttler } from '@ephox/katamari';
-import * as CefUtils from '../keyboard/CefUtils';
+import CefUtils from '../keyboard/CefUtils';
 
 const setup = function (editor) {
   const renderFocusCaret = Throttler.first(function () {

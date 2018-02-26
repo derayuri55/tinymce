@@ -7,13 +7,17 @@
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
  */
+
 import { Arr, Option } from '@ephox/katamari';
-import { ResizeWire, TableDirection, TableResize } from '@ephox/snooker';
-import { Attr, Element, SelectorFilter } from '@ephox/sugar';
-import Tools from 'tinymce/core/api/util/Tools';
-import Direction from '../queries/Direction';
+import { ResizeWire } from '@ephox/snooker';
+import { TableDirection } from '@ephox/snooker';
+import { TableResize } from '@ephox/snooker';
+import { Element } from '@ephox/sugar';
+import { Attr } from '@ephox/sugar';
+import { SelectorFilter } from '@ephox/sugar';
 import TableWire from './TableWire';
-import { hasTableResizeBars, hasObjectResizing } from '../api/Settings';
+import Direction from '../queries/Direction';
+import Tools from 'tinymce/core/api/util/Tools';
 
 export default function (editor) {
   let selectionRng = Option.none();
@@ -52,7 +56,8 @@ export default function (editor) {
     const direction = TableDirection(Direction.directionAt);
     const rawWire = TableWire.get(editor);
     wire = Option.some(rawWire);
-    if (hasObjectResizing(editor) && hasTableResizeBars(editor)) {
+    if (editor.settings.object_resizing && editor.settings.table_resize_bars !== false &&
+      (editor.settings.object_resizing === true || editor.settings.object_resizing === 'table')) {
       const sz = TableResize(rawWire, direction);
       sz.on();
       sz.events.startDrag.bind(function (event) {

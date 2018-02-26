@@ -13,7 +13,6 @@ import Tools from 'tinymce/core/api/util/Tools';
 import Styles from '../actions/Styles';
 import Util from '../alien/Util';
 import Helpers from './Helpers';
-import { hasAdvancedCellTab, getCellClassList } from '../api/Settings';
 
 /**
  * @class tinymce.table.ui.CellDialog
@@ -47,7 +46,7 @@ const extractDataFromElement = function (editor, elm) {
     }
   });
 
-  if (hasAdvancedCellTab(editor)) {
+  if (editor.settings.table_cell_advtab !== false) {
     Tools.extend(data, Helpers.extractAdvancedStyles(dom, elm));
   }
 
@@ -144,13 +143,13 @@ const open = function (editor) {
     data = extractDataFromElement(editor, cellElm);
   }
 
-  if (getCellClassList(editor).length > 0) {
+  if (editor.settings.table_cell_class_list) {
     classListCtrl = {
       name: 'class',
       type: 'listbox',
       label: 'Class',
       values: Helpers.buildListItems(
-        getCellClassList(editor),
+        editor.settings.table_cell_class_list,
         function (item) {
           if (item.value) {
             item.textStyle = function () {
@@ -244,7 +243,7 @@ const open = function (editor) {
     ]
   };
 
-  if (hasAdvancedCellTab(editor)) {
+  if (editor.settings.table_cell_advtab !== false) {
     editor.windowManager.open({
       title: 'Cell properties',
       bodyType: 'tabpanel',

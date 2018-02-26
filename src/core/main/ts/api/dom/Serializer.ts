@@ -8,7 +8,7 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import DomSerializer from '../../dom/DomSerializer';
+import DomSerializer from './DomSerializer';
 import Schema from '../html/Schema';
 
 /**

@@ -1,4 +1,6 @@
-import { Assertions, Pipeline, Step } from '@ephox/agar';
+import { Assertions } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
+import { Step } from '@ephox/agar';
 import * as Bidi from 'tinymce/core/text/Bidi';
 import { UnitTest } from '@ephox/bedrock';
 

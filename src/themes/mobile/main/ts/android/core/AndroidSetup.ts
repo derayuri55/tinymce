@@ -1,10 +1,12 @@
-import { Fun, Option } from '@ephox/katamari';
-import { Attr, DomEvent, Element } from '@ephox/sugar';
-
+import { Fun } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
+import { DomEvent } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Attr } from '@ephox/sugar';
+import ResumeEditing from '../focus/ResumeEditing';
 import Styles from '../../style/Styles';
 import DataAttributes from '../../util/DataAttributes';
 import Rectangles from '../../util/Rectangles';
-import ResumeEditing from '../focus/ResumeEditing';
 
 // This amount is added to the minimum scrolling distance when calculating how much to scroll
 // because the soft keyboard has appeared.

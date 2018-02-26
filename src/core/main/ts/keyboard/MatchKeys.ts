@@ -8,19 +8,12 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr, Fun, Merger } from '@ephox/katamari';
+import { Arr } from '@ephox/katamari';
+import { Fun } from '@ephox/katamari';
+import { Merger } from '@ephox/katamari';
 
-export interface KeyPattern {
-  shiftKey?: boolean;
-  altKey?: boolean;
-  ctrlKey?: boolean;
-  metaKey?: boolean;
-  keyCode?: number;
-  action: () => boolean;
-}
-
-const defaultPatterns = (patterns: KeyPattern[]): KeyPattern[] => {
-  return Arr.map(patterns, (pattern) => {
+const defaultPatterns = function (patterns) {
+  return Arr.map(patterns, function (pattern) {
     return Merger.merge({
       shiftKey: false,
       altKey: false,
@@ -32,7 +25,7 @@ const defaultPatterns = (patterns: KeyPattern[]): KeyPattern[] => {
   });
 };
 
-const matchesEvent = function (pattern: KeyPattern, evt: KeyboardEvent) {
+const matchesEvent = function (pattern, evt) {
   return (
     evt.keyCode === pattern.keyCode &&
     evt.shiftKey === pattern.shiftKey &&
@@ -42,8 +35,8 @@ const matchesEvent = function (pattern: KeyPattern, evt: KeyboardEvent) {
   );
 };
 
-const match = function (patterns: KeyPattern[], evt: KeyboardEvent) {
-  return Arr.bind(defaultPatterns(patterns), (pattern) => {
+const match = function (patterns, evt) {
+  return Arr.bind(defaultPatterns(patterns), function (pattern) {
     return matchesEvent(pattern, evt) ? [pattern] : [ ];
   });
 };
@@ -55,8 +48,8 @@ const action = function (f, ...x: any[]) {
   };
 };
 
-const execute = function (patterns: KeyPattern[], evt: KeyboardEvent) {
-  return Arr.find(match(patterns, evt), (pattern) => {
+const execute = function (patterns, evt) {
+  return Arr.find(match(patterns, evt), function (pattern) {
     return pattern.action();
   });
 };

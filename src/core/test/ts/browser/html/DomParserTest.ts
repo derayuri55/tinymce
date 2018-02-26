@@ -1,5 +1,5 @@
 import { LegacyUnit } from '@ephox/mcagar';
-import { Pipeline, Assertions } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
 import Schema from 'tinymce/core/api/html/Schema';
 import Serializer from 'tinymce/core/api/html/Serializer';
 import DomParser from 'tinymce/core/api/html/DomParser';
@@ -658,32 +658,6 @@ UnitTest.asynctest('browser.tinymce.core.html.DomParserTest', function () {
       ),
       '<div>1 2<div>3</div></div>'
     );
-  });
-
-  suite.test('do not replace starting linebreak with space', function () {
-    const serializer = Serializer();
-
-    LegacyUnit.equal(
-      serializer.serialize(DomParser().parse(
-        '<p>a<br />\nb</p>')
-      ),
-      '<p>a<br />b</p>'
-    );
-  });
-
-  suite.test('getAttributeFilters/getNodeFilters', function () {
-    const parser = DomParser();
-    const cb1 = (nodes, name, args) => {};
-    const cb2 = (nodes, name, args) => {};
-
-    parser.addAttributeFilter('attr', cb1);
-    parser.addNodeFilter('node', cb2);
-
-    const attrFilters = parser.getAttributeFilters();
-    const nodeFilters = parser.getNodeFilters();
-
-    Assertions.assertEq('Should be expected filter', {name: 'attr', callbacks: [cb1] }, attrFilters[attrFilters.length - 1]);
-    Assertions.assertEq('Should be extected filter', {name: 'node', callbacks: [cb2] }, nodeFilters[nodeFilters.length - 1]);
   });
 
   Pipeline.async({}, suite.toSteps({}), function () {

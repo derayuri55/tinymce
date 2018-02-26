@@ -1,10 +1,11 @@
-import { Behaviour, Slider, Toggling } from '@ephox/alloy';
+import { Behaviour } from '@ephox/alloy';
+import { Toggling } from '@ephox/alloy';
+import { Slider } from '@ephox/alloy';
 import { Css } from '@ephox/sugar';
-
 import Receivers from '../channels/Receivers';
 import Styles from '../style/Styles';
-import UiDomFactory from '../util/UiDomFactory';
 import ToolbarWidgets from './ToolbarWidgets';
+import UiDomFactory from '../util/UiDomFactory';
 
 const BLACK = -1;
 

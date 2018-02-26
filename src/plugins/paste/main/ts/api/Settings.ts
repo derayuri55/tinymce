@@ -8,59 +8,55 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Editor } from 'tinymce/core/api/Editor';
-
-const shouldPlainTextInform = (editor: Editor): boolean => {
+const shouldPlainTextInform = function (editor) {
   return editor.getParam('paste_plaintext_inform', true);
 };
 
-const shouldBlockDrop = (editor: Editor): boolean => {
+const shouldBlockDrop = function (editor) {
   return editor.getParam('paste_block_drop', false);
 };
 
-const shouldPasteDataImages = (editor: Editor): boolean => {
+const shouldPasteDataImages = function (editor) {
   return editor.getParam('paste_data_images', false);
 };
 
-const shouldFilterDrop = (editor: Editor): boolean => {
+const shouldFilterDrop = function (editor) {
   return editor.getParam('paste_filter_drop', true);
 };
 
-type ProcessFn = (plugin, args) => void;
-
-const getPreProcess = (editor: Editor): ProcessFn => {
+const getPreProcess = function (editor) {
   return editor.getParam('paste_preprocess');
 };
 
-const getPostProcess = (editor: Editor): ProcessFn => {
+const getPostProcess = function (editor) {
   return editor.getParam('paste_postprocess');
 };
 
-const getWebkitStyles = (editor: Editor): string => {
+const getWebkitStyles = function (editor) {
   return editor.getParam('paste_webkit_styles');
 };
 
-const shouldRemoveWebKitStyles = (editor: Editor): boolean => {
+const shouldRemoveWebKitStyles = function (editor) {
   return editor.getParam('paste_remove_styles_if_webkit', true);
 };
 
-const shouldMergeFormats = (editor: Editor): boolean => {
+const shouldMergeFormats = function (editor) {
   return editor.getParam('paste_merge_formats', true);
 };
 
-const isSmartPasteEnabled = (editor: Editor): boolean => {
+const isSmartPasteEnabled = function (editor) {
   return editor.getParam('smart_paste', true);
 };
 
-const isPasteAsTextEnabled = (editor: Editor): boolean => {
+const isPasteAsTextEnabled = function (editor) {
   return editor.getParam('paste_as_text', false);
 };
 
-const getRetainStyleProps = (editor: Editor): string => {
+const getRetainStyleProps = function (editor) {
   return editor.getParam('paste_retain_style_properties');
 };
 
-const getWordValidElements = (editor: Editor): string => {
+const getWordValidElements = function (editor) {
   const defaultValidElements = (
     '-strong/b,-em/i,-u,-span,-p,-ol,-ul,-li,-h1,-h2,-h3,-h4,-h5,-h6,' +
     '-p/div,-a[href|name],sub,sup,strike,br,del,table[width],tr,' +
@@ -70,11 +66,11 @@ const getWordValidElements = (editor: Editor): string => {
   return editor.getParam('paste_word_valid_elements', defaultValidElements);
 };
 
-const shouldConvertWordFakeLists = (editor: Editor): boolean => {
+const shouldConvertWordFakeLists = function (editor) {
   return editor.getParam('paste_convert_word_fake_lists', true);
 };
 
-const shouldUseDefaultFilters = (editor: Editor): boolean => {
+const shouldUseDefaultFilters = function (editor) {
   return editor.getParam('paste_enable_default_filters', true);
 };
 

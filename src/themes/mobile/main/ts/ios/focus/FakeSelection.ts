@@ -1,11 +1,16 @@
 import { Arr } from '@ephox/katamari';
-import {
-    Class, Classes, Css, DomEvent, Element, Insert, InsertAll, Remove, Traverse
-} from '@ephox/sugar';
-
+import { Insert } from '@ephox/sugar';
+import { InsertAll } from '@ephox/sugar';
+import { Remove } from '@ephox/sugar';
+import { DomEvent } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Class } from '@ephox/sugar';
+import { Classes } from '@ephox/sugar';
+import { Css } from '@ephox/sugar';
+import { Traverse } from '@ephox/sugar';
+import ResumeEditing from './ResumeEditing';
 import Styles from '../../style/Styles';
 import Rectangles from '../../util/Rectangles';
-import ResumeEditing from './ResumeEditing';
 
 export default function (win, frame) {
   // NOTE: This may be required for android also.

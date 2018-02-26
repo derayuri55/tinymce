@@ -1,4 +1,5 @@
-import { Cell, LazyValue } from '@ephox/katamari';
+import { Cell } from '@ephox/katamari';
+import { LazyValue } from '@ephox/katamari';
 
 export default function (doAction) {
   // Start the activity in idle state.

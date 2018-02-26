@@ -10,7 +10,7 @@
 
 import NodeType from '../dom/NodeType';
 import Arr from '../util/Arr';
-import * as CaretContainer from './CaretContainer';
+import CaretContainer from './CaretContainer';
 
 /**
  * This module contains logic for handling caret candidates. A caret candidate is
@@ -20,14 +20,14 @@ import * as CaretContainer from './CaretContainer';
  * @class tinymce.caret.CaretCandidate
  */
 
-const isContentEditableTrue = NodeType.isContentEditableTrue;
-const isContentEditableFalse = NodeType.isContentEditableFalse;
-const isBr = NodeType.isBr;
-const isText = NodeType.isText;
-const isInvalidTextElement = NodeType.matchNodeNames('script style textarea');
-const isAtomicInline = NodeType.matchNodeNames('img input textarea hr iframe video audio object');
-const isTable = NodeType.matchNodeNames('table');
-const isCaretContainer = CaretContainer.isCaretContainer;
+const isContentEditableTrue = NodeType.isContentEditableTrue,
+  isContentEditableFalse = NodeType.isContentEditableFalse,
+  isBr = NodeType.isBr,
+  isText = NodeType.isText,
+  isInvalidTextElement = NodeType.matchNodeNames('script style textarea'),
+  isAtomicInline = NodeType.matchNodeNames('img input textarea hr iframe video audio object'),
+  isTable = NodeType.matchNodeNames('table'),
+  isCaretContainer = CaretContainer.isCaretContainer;
 
 const isCaretCandidate = (node: Node): boolean => {
   if (isCaretContainer(node)) {
@@ -45,8 +45,8 @@ const isCaretCandidate = (node: Node): boolean => {
   return isAtomicInline(node) || isBr(node) || isTable(node) || isContentEditableFalse(node);
 };
 
-const isInEditable = (node: Node, root: Node): boolean => {
-  for (node = node.parentNode; node && node !== root; node = node.parentNode) {
+const isInEditable = function (node, rootNode) {
+  for (node = node.parentNode; node && node !== rootNode; node = node.parentNode) {
     if (isContentEditableFalse(node)) {
       return false;
     }
@@ -59,7 +59,7 @@ const isInEditable = (node: Node, root: Node): boolean => {
   return true;
 };
 
-const isAtomicContentEditableFalse = (node: Node): boolean => {
+const isAtomicContentEditableFalse = function (node) {
   if (!isContentEditableFalse(node)) {
     return false;
   }
@@ -69,10 +69,15 @@ const isAtomicContentEditableFalse = (node: Node): boolean => {
   }, false) !== true;
 };
 
-const isAtomic = (node: Node): boolean => isAtomicInline(node) || isAtomicContentEditableFalse(node);
-const isEditableCaretCandidate = (node: Node, root?: Node) => isCaretCandidate(node) && isInEditable(node, root);
+const isAtomic = function (node) {
+  return isAtomicInline(node) || isAtomicContentEditableFalse(node);
+};
 
-export {
+const isEditableCaretCandidate = function (node, rootNode?) {
+  return isCaretCandidate(node) && isInEditable(node, rootNode);
+};
+
+export default {
   isCaretCandidate,
   isInEditable,
   isAtomic,

@@ -1,6 +1,9 @@
-import { Behaviour, Button, Container, Memento, Toggling } from '@ephox/alloy';
+import { Behaviour } from '@ephox/alloy';
+import { Toggling } from '@ephox/alloy';
+import { Memento } from '@ephox/alloy';
+import { Button } from '@ephox/alloy';
+import { Container } from '@ephox/alloy';
 import { Throttler } from '@ephox/katamari';
-
 import Styles from '../../style/Styles';
 import UiDomFactory from '../../util/UiDomFactory';
 

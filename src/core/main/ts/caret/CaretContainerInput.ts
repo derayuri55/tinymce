@@ -9,8 +9,9 @@
  */
 
 import { Fun } from '@ephox/katamari';
-import { Element, SelectorFind } from '@ephox/sugar';
-import * as CaretContainer from './CaretContainer';
+import { Element } from '@ephox/sugar';
+import { SelectorFind } from '@ephox/sugar';
+import CaretContainer from './CaretContainer';
 
 /**
  * This module shows the invisble block that the caret is currently in when contents is added to that block.

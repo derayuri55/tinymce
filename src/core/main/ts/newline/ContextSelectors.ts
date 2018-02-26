@@ -8,7 +8,8 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Element, Selectors } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Selectors } from '@ephox/sugar';
 import Settings from '../api/Settings';
 import NewLineUtils from './NewLineUtils';
 

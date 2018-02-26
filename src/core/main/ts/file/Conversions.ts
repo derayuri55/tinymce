@@ -8,7 +8,11 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Blob, FileReader, Uint8Array, Window, XMLHttpRequest } from '@ephox/sand';
+import { Blob } from '@ephox/sand';
+import { FileReader } from '@ephox/sand';
+import { Uint8Array } from '@ephox/sand';
+import { Window } from '@ephox/sand';
+import { XMLHttpRequest } from '@ephox/sand';
 import Promise from '../api/util/Promise';
 
 /**

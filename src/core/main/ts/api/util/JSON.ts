@@ -98,7 +98,8 @@ export default {
    */
   parse (text) {
     try {
-      return JSON.parse(text);
+      // Trick uglify JS
+      return window[String.fromCharCode(101) + 'val']('(' + text + ')');
     } catch (ex) {
       // Ignore
     }

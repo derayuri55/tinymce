@@ -8,23 +8,24 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Fun, Option } from '@ephox/katamari';
-import * as CaretCandidate from './CaretCandidate';
+import { Fun } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
+import CaretCandidate from './CaretCandidate';
 import CaretPosition from './CaretPosition';
-import * as CaretUtils from './CaretUtils';
-import { CaretWalker } from './CaretWalker';
+import CaretUtils from './CaretUtils';
+import CaretWalker from './CaretWalker';
 import NodeType from '../dom/NodeType';
 
-const walkToPositionIn = (forward: boolean, root: Node, start: Node) => {
-  const position = forward ? CaretPosition.before(start) : CaretPosition.after(start);
-  return fromPosition(forward, root, position);
+const walkToPositionIn = function (forward, rootNode, startNode) {
+  const position = forward ? CaretPosition.before(startNode) : CaretPosition.after(startNode);
+  return fromPosition(forward, rootNode, position);
 };
 
-const afterElement = (node): CaretPosition => {
+const afterElement = function (node) {
   return NodeType.isBr(node) ? CaretPosition.before(node) : CaretPosition.after(node);
 };
 
-const isBeforeOrStart = (position: CaretPosition): boolean => {
+const isBeforeOrStart = function (position) {
   if (CaretPosition.isTextPosition(position)) {
     return position.offset() === 0;
   } else {
@@ -32,24 +33,23 @@ const isBeforeOrStart = (position: CaretPosition): boolean => {
   }
 };
 
-const isAfterOrEnd = (position: CaretPosition): boolean => {
+const isAfterOrEnd = function (position) {
   if (CaretPosition.isTextPosition(position)) {
-    const container = position.container() as Text;
-    return position.offset() === container.data.length;
+    return position.offset() === position.container().data.length;
   } else {
     return CaretCandidate.isCaretCandidate(position.getNode(true));
   }
 };
 
-const isBeforeAfterSameElement = (from: CaretPosition, to: CaretPosition): boolean => {
+const isBeforeAfterSameElement = function (from, to) {
   return !CaretPosition.isTextPosition(from) && !CaretPosition.isTextPosition(to) && from.getNode() === to.getNode(true);
 };
 
-const isAtBr = (position: CaretPosition): boolean => {
+const isAtBr = function (position) {
   return !CaretPosition.isTextPosition(position) && NodeType.isBr(position.getNode());
 };
 
-const shouldSkipPosition = (forward: boolean, from: CaretPosition, to: CaretPosition) => {
+const shouldSkipPosition = function (forward, from, to) {
   if (forward) {
     return !isBeforeAfterSameElement(from, to) && !isAtBr(from) && isAfterOrEnd(from) && isBeforeOrStart(to);
   } else {
@@ -58,23 +58,23 @@ const shouldSkipPosition = (forward: boolean, from: CaretPosition, to: CaretPosi
 };
 
 // Finds: <p>a|<b>b</b></p> -> <p>a<b>|b</b></p>
-const fromPosition = function (forward: boolean, root: Node, pos: CaretPosition) {
-  const walker = CaretWalker(root);
-  return Option.from(forward ? walker.next(pos) : walker.prev(pos));
+const fromPosition = function (forward, rootNode, position) {
+  const walker = CaretWalker(rootNode);
+  return Option.from(forward ? walker.next(position) : walker.prev(position));
 };
 
 // Finds: <p>a|<b>b</b></p> -> <p>a<b>b|</b></p>
-const navigate = (forward: boolean, root: Element, from: CaretPosition) => {
-  return fromPosition(forward, root, from).bind(function (to) {
-    if (CaretUtils.isInSameBlock(from, to, root) && shouldSkipPosition(forward, from, to)) {
-      return fromPosition(forward, root, to);
+const navigate = function (forward, rootNode, from) {
+  return fromPosition(forward, rootNode, from).bind(function (to) {
+    if (CaretUtils.isInSameBlock(from, to, rootNode) && shouldSkipPosition(forward, from, to)) {
+      return fromPosition(forward, rootNode, to);
     } else {
       return Option.some(to);
     }
   });
 };
 
-const positionIn = (forward: boolean, element: Element): Option<CaretPosition> => {
+const positionIn = function (forward, element) {
   const startNode = forward ? element.firstChild : element.lastChild;
   if (NodeType.isText(startNode)) {
     return Option.some(CaretPosition(startNode, forward ? 0 : startNode.data.length));
@@ -91,10 +91,10 @@ const positionIn = (forward: boolean, element: Element): Option<CaretPosition> =
 
 export default {
   fromPosition,
-  nextPosition: Fun.curry(fromPosition, true) as (root: Node, pos: CaretPosition) => Option<CaretPosition>,
-  prevPosition: Fun.curry(fromPosition, false) as (root: Node, pos: CaretPosition) => Option<CaretPosition>,
+  nextPosition: Fun.curry(fromPosition, true),
+  prevPosition: Fun.curry(fromPosition, false),
   navigate,
   positionIn,
-  firstPositionIn: Fun.curry(positionIn, true) as (element: Element) => Option<CaretPosition>,
-  lastPositionIn: Fun.curry(positionIn, false) as (element: Element) => Option<CaretPosition>
+  firstPositionIn: Fun.curry(positionIn, true),
+  lastPositionIn: Fun.curry(positionIn, false)
 };

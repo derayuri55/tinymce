@@ -1,6 +1,6 @@
 import { LegacyUnit } from '@ephox/mcagar';
 import { Pipeline } from '@ephox/agar';
-import * as ClientRect from 'tinymce/core/geom/ClientRect';
+import ClientRect from 'tinymce/core/geom/ClientRect';
 import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.tinymce.core.geom.ClientRectTest', function () {

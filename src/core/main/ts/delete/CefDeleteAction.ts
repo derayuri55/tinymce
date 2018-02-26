@@ -8,11 +8,12 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Adt, Fun , Option } from '@ephox/katamari';
+import { Adt, Fun } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
 import { Element } from '@ephox/sugar';
 import CaretFinder from '../caret/CaretFinder';
 import CaretPosition from '../caret/CaretPosition';
-import * as CaretUtils from '../caret/CaretUtils';
+import CaretUtils from '../caret/CaretUtils';
 import DeleteUtils from './DeleteUtils';
 import Empty from '../dom/Empty';
 import NodeType from '../dom/NodeType';

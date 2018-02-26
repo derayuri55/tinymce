@@ -13,11 +13,10 @@ import Node from 'tinymce/core/api/html/Node';
 import Settings from '../api/Settings';
 import Sanitize from './Sanitize';
 import VideoScript from './VideoScript';
-import { Editor } from 'tinymce/core/api/Editor';
 
 declare let escape: any;
 
-const createPlaceholderNode = function (editor: Editor, node: Node) {
+const createPlaceholderNode = function (editor, node) {
   let placeHolder;
   const name = node.name;
 
@@ -38,7 +37,7 @@ const createPlaceholderNode = function (editor: Editor, node: Node) {
   return placeHolder;
 };
 
-const createPreviewIframeNode = function (editor: Editor, node: Node) {
+const createPreviewIframeNode = function (editor, node) {
   let previewWrapper;
   let previewNode;
   let shimNode;
@@ -58,10 +57,8 @@ const createPreviewIframeNode = function (editor: Editor, node: Node) {
   previewNode.attr({
     src: node.attr('src'),
     allowfullscreen: node.attr('allowfullscreen'),
-    style: node.attr('style'),
-    class: node.attr('class'),
-    width: node.attr('width'),
-    height: node.attr('height'),
+    width: node.attr('width') || '300',
+    height: node.attr('height') || (name === 'audio' ? '30' : '150'),
     frameborder: '0'
   });
 
@@ -74,7 +71,7 @@ const createPreviewIframeNode = function (editor: Editor, node: Node) {
   return previewWrapper;
 };
 
-const retainAttributesAndInnerHtml = function (editor: Editor, sourceNode: Node, targetNode: Node) {
+const retainAttributesAndInnerHtml = function (editor, sourceNode, targetNode) {
   let attrName;
   let attrValue;
   let attribs;
@@ -107,7 +104,7 @@ const retainAttributesAndInnerHtml = function (editor: Editor, sourceNode: Node,
   }
 };
 
-const isWithinEphoxEmbed = function (node: Node) {
+const isWithinEphoxEmbed = function (node) {
   while ((node = node.parent)) {
     if (node.attr('data-ephox-embed-iri')) {
       return true;
@@ -117,7 +114,7 @@ const isWithinEphoxEmbed = function (node: Node) {
   return false;
 };
 
-const placeHolderConverter = function (editor: Editor) {
+const placeHolderConverter = function (editor) {
   return function (nodes) {
     let i = nodes.length;
     let node;

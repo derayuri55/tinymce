@@ -1,11 +1,13 @@
-import { Pipeline, RawAssertions, Step, Waiter } from '@ephox/agar';
-import { UnitTest } from '@ephox/bedrock';
-import { TinyLoader, TinyUi } from '@ephox/mcagar';
-
+import { Pipeline } from '@ephox/agar';
+import { RawAssertions } from '@ephox/agar';
+import { Step } from '@ephox/agar';
+import { Waiter } from '@ephox/agar';
+import { TinyLoader } from '@ephox/mcagar';
+import { TinyUi } from '@ephox/mcagar';
 import Plugin from 'tinymce/plugins/media/Plugin';
-import Theme from 'tinymce/themes/modern/Theme';
-
 import Utils from '../module/test/Utils';
+import Theme from 'tinymce/themes/modern/Theme';
+import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.tinymce.plugins.media.ReopenResizeTest', function () {
   const success = arguments[arguments.length - 2];

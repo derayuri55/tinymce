@@ -1,7 +1,10 @@
-import { Assertions, Pipeline, Step } from '@ephox/agar';
+import { Assertions } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
+import { Step } from '@ephox/agar';
 import { Arr } from '@ephox/katamari';
 import { TinyLoader } from '@ephox/mcagar';
-import { Element, Node } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Node } from '@ephox/sugar';
 import ModernTheme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';
 

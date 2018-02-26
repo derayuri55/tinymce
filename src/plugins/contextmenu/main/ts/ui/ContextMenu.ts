@@ -11,7 +11,6 @@
 import Factory from 'tinymce/core/api/ui/Factory';
 import Tools from 'tinymce/core/api/util/Tools';
 import Settings from '../api/Settings';
-import { getUiContainer } from 'tinymce/plugins/contextmenu/core/UiContainer';
 
 const renderMenu = function (editor, visibleState) {
   let menu, contextmenu;
@@ -43,10 +42,7 @@ const renderMenu = function (editor, visibleState) {
     items,
     context: 'contextmenu',
     classes: 'contextmenu'
-  });
-
-  menu.uiContainer = getUiContainer(editor);
-  menu.renderTo(getUiContainer(editor));
+  }).renderTo();
 
   menu.on('hide', function (e) {
     if (e.control === this) {

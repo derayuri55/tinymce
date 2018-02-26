@@ -1,5 +1,10 @@
-import { Assertions, Chain, GeneralSteps, Logger, Pipeline } from '@ephox/agar';
-import { Hierarchy, Element } from '@ephox/sugar';
+import { Assertions } from '@ephox/agar';
+import { Chain } from '@ephox/agar';
+import { GeneralSteps } from '@ephox/agar';
+import { Logger } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
+import { Hierarchy } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
 import CaretFinder from 'tinymce/core/caret/CaretFinder';
 import CaretPosition from 'tinymce/core/caret/CaretPosition';
 import ViewBlock from '../../module/test/ViewBlock';
@@ -286,17 +291,7 @@ UnitTest.asynctest('browser.tinymce.core.CaretFinderTest', function () {
           cCreateFromPosition([0], 0),
           cNavigate(false),
           cAssertNone
-        ])),
-        Logger.t('Should jump over bogus elements', Chain.asStep(viewBlock, [
-          cSetHtml([
-            '<p>1</p>',
-            '<p data-mce-bogus="all"></p>',
-            '<p>2</p>'
-          ].join('')),
-          cCreateFromPosition([], 2),
-          cNavigate(false),
-          cAssertCaretPosition([0, 0], 1)
-        ])),
+        ]))
       ]))
     ])),
 

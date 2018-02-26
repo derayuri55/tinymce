@@ -25,7 +25,7 @@ PluginManager.add('spellchecker', function (editor, pluginUrl) {
     const lastSuggestionsState = Cell({});
 
     Buttons.register(editor, pluginUrl, startedState, textMatcherState, currentLanguageState, lastSuggestionsState);
-    SuggestionsMenu.setup(editor, pluginUrl, lastSuggestionsState, startedState, textMatcherState, currentLanguageState);
+    SuggestionsMenu.setup(editor, pluginUrl, lastSuggestionsState, startedState, textMatcherState);
     Commands.register(editor, pluginUrl, startedState, textMatcherState, lastSuggestionsState, currentLanguageState);
 
     return Api.get(editor, startedState, lastSuggestionsState, textMatcherState, pluginUrl);

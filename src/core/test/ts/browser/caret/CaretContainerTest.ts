@@ -1,6 +1,6 @@
 import { Pipeline } from '@ephox/agar';
 import { LegacyUnit } from '@ephox/mcagar';
-import * as CaretContainer from 'tinymce/core/caret/CaretContainer';
+import CaretContainer from 'tinymce/core/caret/CaretContainer';
 import CaretPosition from 'tinymce/core/caret/CaretPosition';
 import DomQuery from 'tinymce/core/api/dom/DomQuery';
 import Env from 'tinymce/core/api/Env';
@@ -107,8 +107,7 @@ UnitTest.asynctest('browser.tinymce.core.CaretContainerTest', function () {
 
   suite.test('endsWithCaretContainer', function () {
     setupHtml('abc');
-    const textNode = viewBlock.get().firstChild as Text;
-    textNode.appendData(Zwsp.ZWSP);
+    viewBlock.get().firstChild.appendData(Zwsp.ZWSP);
     LegacyUnit.equal(CaretContainer.endsWithCaretContainer(getRoot().firstChild), true);
   });
 
@@ -122,7 +121,7 @@ UnitTest.asynctest('browser.tinymce.core.CaretContainerTest', function () {
 
   suite.test('showCaretContainerBlock', function () {
     setupHtml('<span contentEditable="false">1</span>');
-    const caretContainerBlock = CaretContainer.insertBlock('p', getRoot().firstChild, true) as HTMLElement;
+    const caretContainerBlock = CaretContainer.insertBlock('p', getRoot().firstChild, true);
     caretContainerBlock.insertBefore(document.createTextNode('a'), caretContainerBlock.firstChild);
     CaretContainer.showCaretContainerBlock(caretContainerBlock);
     LegacyUnit.equal(caretContainerBlock.outerHTML, '<p>a</p>');
@@ -130,7 +129,7 @@ UnitTest.asynctest('browser.tinymce.core.CaretContainerTest', function () {
 
   suite.test('prependInline', function () {
     setupHtml('a');
-    const caretContainerTextNode = CaretContainer.prependInline(getRoot().firstChild) as Text;
+    const caretContainerTextNode = CaretContainer.prependInline(getRoot().firstChild);
     LegacyUnit.equal(caretContainerTextNode.data, Zwsp.ZWSP + 'a');
   });
 
@@ -142,7 +141,7 @@ UnitTest.asynctest('browser.tinymce.core.CaretContainerTest', function () {
 
   suite.test('appendInline', function () {
     setupHtml('a');
-    const caretContainerTextNode = CaretContainer.appendInline(getRoot().firstChild) as Text;
+    const caretContainerTextNode = CaretContainer.appendInline(getRoot().firstChild);
     LegacyUnit.equal(caretContainerTextNode.data, 'a' + Zwsp.ZWSP);
   });
 

@@ -1,12 +1,11 @@
 import { Pipeline } from '@ephox/agar';
-import { UnitTest } from '@ephox/bedrock';
-import { LegacyUnit, TinyLoader } from '@ephox/mcagar';
-
+import { LegacyUnit } from '@ephox/mcagar';
+import { TinyLoader } from '@ephox/mcagar';
 import Tools from 'tinymce/core/api/util/Tools';
 import Plugin from 'tinymce/plugins/toc/Plugin';
-import Theme from 'tinymce/themes/modern/Theme';
-
 import HtmlUtils from '../module/test/HtmlUtils';
+import Theme from 'tinymce/themes/modern/Theme';
+import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.tinymce.plugins.toc.TocPluginTest', function () {
   const success = arguments[arguments.length - 2];

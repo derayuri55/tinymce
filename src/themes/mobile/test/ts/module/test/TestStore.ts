@@ -1,4 +1,5 @@
-import { RawAssertions, Step } from '@ephox/agar';
+import { RawAssertions } from '@ephox/agar';
+import { Step } from '@ephox/agar';
 import { Option } from '@ephox/katamari';
 
 export default function () {

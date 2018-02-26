@@ -74,9 +74,7 @@ export default function (editor) {
     win.features = args || {};
     win.params = params || {};
 
-    // Always render dialogs into the body since webkit would scroll ui containers
-    // if you open a fixed container and move focus to an input within that container
-    win = win.renderTo(document.body).reflow();
+    win = win.renderTo().reflow();
 
     return win;
   };

@@ -13,24 +13,22 @@ import Delay from 'tinymce/core/api/util/Delay';
 import Settings from '../api/Settings';
 import InternalHtml from './InternalHtml';
 import Utils from './Utils';
-import { Editor } from 'tinymce/core/api/Editor';
-import { Clipboard } from '../api/Clipboard';
 
-const getCaretRangeFromEvent = function (editor: Editor, e: MouseEvent) {
+const getCaretRangeFromEvent = function (editor, e) {
   return RangeUtils.getCaretRangeFromPoint(e.clientX, e.clientY, editor.getDoc());
 };
 
-const isPlainTextFileUrl = function (content: DataTransfer) {
+const isPlainTextFileUrl = function (content) {
   const plainTextContent = content['text/plain'];
   return plainTextContent ? plainTextContent.indexOf('file://') === 0 : false;
 };
 
-const setFocusedRange = function (editor: Editor, rng: Range) {
+const setFocusedRange = function (editor, rng) {
   editor.focus();
   editor.selection.setRng(rng);
 };
 
-const setup = function (editor: Editor, clipboard: Clipboard, draggingInternallyState) {
+const setup = function (editor, clipboard, draggingInternallyState) {
   // Block all drag/drop events
   if (Settings.shouldBlockDrop(editor)) {
     editor.on('dragend dragover draggesture dragdrop drop drag', function (e) {

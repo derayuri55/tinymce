@@ -8,12 +8,15 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr, Fun, Option } from '@ephox/katamari';
-import { Element, Selectors } from '@ephox/sugar';
+import { Arr } from '@ephox/katamari';
+import { Fun } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
+import { Element } from '@ephox/sugar';
+import { Selectors } from '@ephox/sugar';
 import * as EditorSettings from '../EditorSettings';
-import * as CaretContainer from '../caret/CaretContainer';
+import CaretContainer from '../caret/CaretContainer';
 import CaretPosition from '../caret/CaretPosition';
-import * as CaretUtils from '../caret/CaretUtils';
+import CaretUtils from '../caret/CaretUtils';
 import DOMUtils from '../api/dom/DOMUtils';
 import NodeType from '../dom/NodeType';
 import * as Bidi from '../text/Bidi';

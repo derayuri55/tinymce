@@ -8,7 +8,11 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr, Fun, Future, Futures, Result } from '@ephox/katamari';
+import { Arr } from '@ephox/katamari';
+import { Fun } from '@ephox/katamari';
+import { Future } from '@ephox/katamari';
+import { Futures } from '@ephox/katamari';
+import { Result } from '@ephox/katamari';
 import Delay from '../api/util/Delay';
 import Tools from '../api/util/Tools';
 

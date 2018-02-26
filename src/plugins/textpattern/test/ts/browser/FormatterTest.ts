@@ -1,8 +1,10 @@
-import { Assertions, Chain, Logger, Pipeline } from '@ephox/agar';
-import { UnitTest } from '@ephox/bedrock';
-
+import { Assertions } from '@ephox/agar';
+import { Chain } from '@ephox/agar';
+import { Logger } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
 import Settings from 'tinymce/plugins/textpattern/api/Settings';
 import Formatter from 'tinymce/plugins/textpattern/core/Formatter';
+import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('Browser Test: .FormatterTest', function () {
   const success = arguments[arguments.length - 2];

@@ -8,29 +8,39 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
+import Fun from '../util/Fun';
 import Arr from '../util/Arr';
 import NodeType from '../dom/NodeType';
-import { NodeClientRect, getClientRects } from '../dom/Dimensions';
-import * as ClientRect from '../geom/ClientRect';
-import * as CaretUtils from './CaretUtils';
-import * as CaretCandidate from './CaretCandidate';
-import { Fun } from '@ephox/katamari';
-import { ClientRectLine, VDirection } from 'tinymce/core/caret/LineWalker';
-import { isFakeCaretTarget } from 'tinymce/core/caret/FakeCaret';
+import Dimensions from '../dom/Dimensions';
+import ClientRect from '../geom/ClientRect';
+import CaretUtils from './CaretUtils';
+import CaretCandidate from './CaretCandidate';
 
-export interface CaretInfo {
-  node: Node;
-  before: boolean;
-}
+/**
+ * Utility functions for working with lines.
+ *
+ * @private
+ * @class tinymce.caret.LineUtils
+ */
 
-const isContentEditableFalse = NodeType.isContentEditableFalse;
-const findNode = CaretUtils.findNode;
-const distanceToRectLeft = (clientRect: NodeClientRect, clientX: number) => Math.abs(clientRect.left - clientX);
-const distanceToRectRight = (clientRect: NodeClientRect, clientX: number) => Math.abs(clientRect.right - clientX);
-const isInside = (clientX: number, clientRect: ClientRect): boolean => clientX >= clientRect.left && clientX <= clientRect.right;
+const isContentEditableFalse = NodeType.isContentEditableFalse,
+  findNode = CaretUtils.findNode,
+  curry = Fun.curry;
 
-const findClosestClientRect = (clientRects: ClientRect[], clientX: number): NodeClientRect => {
-  return Arr.reduce(clientRects, (oldClientRect, clientRect) => {
+const distanceToRectLeft = function (clientRect, clientX) {
+  return Math.abs(clientRect.left - clientX);
+};
+
+const distanceToRectRight = function (clientRect, clientX) {
+  return Math.abs(clientRect.right - clientX);
+};
+
+const findClosestClientRect = function (clientRects, clientX) {
+  const isInside = function (clientX, clientRect) {
+    return clientX >= clientRect.left && clientX <= clientRect.right;
+  };
+
+  return Arr.reduce(clientRects, function (oldClientRect, clientRect) {
     let oldDistance, newDistance;
 
     oldDistance = Math.min(distanceToRectLeft(oldClientRect, clientX), distanceToRectRight(oldClientRect, clientX));
@@ -57,21 +67,21 @@ const findClosestClientRect = (clientRects: ClientRect[], clientX: number): Node
   });
 };
 
-const walkUntil = (direction: VDirection, root: Node, predicateFn: (node: Node) => boolean, node: Node): void => {
-  while ((node = findNode(node, direction, CaretCandidate.isEditableCaretCandidate, root))) {
+const walkUntil = function (direction, rootNode, predicateFn, node) {
+  while ((node = findNode(node, direction, CaretCandidate.isEditableCaretCandidate, rootNode))) {
     if (predicateFn(node)) {
       return;
     }
   }
 };
 
-const findLineNodeRects = (root: Node, targetNodeRect: NodeClientRect): ClientRectLine[] => {
+const findLineNodeRects = function (rootNode, targetNodeRect) {
   let clientRects = [];
 
-  const collect = (checkPosFn, node) => {
+  const collect = function (checkPosFn, node) {
     let lineRects;
 
-    lineRects = Arr.filter(getClientRects([node]), function (clientRect) {
+    lineRects = Arr.filter(Dimensions.getClientRects(node), function (clientRect) {
       return !checkPosFn(clientRect, targetNodeRect);
     });
 
@@ -81,33 +91,35 @@ const findLineNodeRects = (root: Node, targetNodeRect: NodeClientRect): ClientRe
   };
 
   clientRects.push(targetNodeRect);
-  walkUntil(VDirection.Up, root, Fun.curry(collect, ClientRect.isAbove), targetNodeRect.node);
-  walkUntil(VDirection.Down, root, Fun.curry(collect, ClientRect.isBelow), targetNodeRect.node);
+  walkUntil(-1, rootNode, curry(collect, ClientRect.isAbove), targetNodeRect.node);
+  walkUntil(1, rootNode, curry(collect, ClientRect.isBelow), targetNodeRect.node);
 
   return clientRects;
 };
 
-const getFakeCaretTargets = (root: HTMLElement): HTMLElement[] => {
-  return Arr.filter(Arr.toArray(root.getElementsByTagName('*')), isFakeCaretTarget);
+const getContentEditableFalseChildren = function (rootNode) {
+  return Arr.filter(Arr.toArray(rootNode.getElementsByTagName('*')), isContentEditableFalse);
 };
 
-const caretInfo = (clientRect: NodeClientRect, clientX: number): CaretInfo => {
+const caretInfo = function (clientRect, clientX) {
   return {
     node: clientRect.node,
     before: distanceToRectLeft(clientRect, clientX) < distanceToRectRight(clientRect, clientX)
   };
 };
 
-const closestCaret = (root: HTMLElement, clientX: number, clientY: number): CaretInfo => {
-  let closestNodeRect;
+const closestCaret = function (rootNode, clientX, clientY) {
+  let contentEditableFalseNodeRects, closestNodeRect;
 
-  const contentEditableFalseNodeRects = getClientRects(getFakeCaretTargets(root));
-  const targetNodeRects = Arr.filter(contentEditableFalseNodeRects, (rect) => clientY >= rect.top && clientY <= rect.bottom);
+  contentEditableFalseNodeRects = Dimensions.getClientRects(getContentEditableFalseChildren(rootNode));
+  contentEditableFalseNodeRects = Arr.filter(contentEditableFalseNodeRects, function (clientRect) {
+    return clientY >= clientRect.top && clientY <= clientRect.bottom;
+  });
 
-  closestNodeRect = findClosestClientRect(targetNodeRects, clientX);
+  closestNodeRect = findClosestClientRect(contentEditableFalseNodeRects, clientX);
   if (closestNodeRect) {
-    closestNodeRect = findClosestClientRect(findLineNodeRects(root, closestNodeRect), clientX);
-    if (closestNodeRect && isFakeCaretTarget(closestNodeRect.node)) {
+    closestNodeRect = findClosestClientRect(findLineNodeRects(rootNode, closestNodeRect), clientX);
+    if (closestNodeRect && isContentEditableFalse(closestNodeRect.node)) {
       return caretInfo(closestNodeRect, clientX);
     }
   }
@@ -115,7 +127,7 @@ const closestCaret = (root: HTMLElement, clientX: number, clientY: number): Care
   return null;
 };
 
-export {
+export default {
   findClosestClientRect,
   findLineNodeRects,
   closestCaret

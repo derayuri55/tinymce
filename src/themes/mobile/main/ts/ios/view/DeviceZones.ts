@@ -1,7 +1,8 @@
-import { Css, Height, Traverse } from '@ephox/sugar';
-
-import Orientation from '../../touch/view/Orientation';
+import { Css } from '@ephox/sugar';
+import { Traverse } from '@ephox/sugar';
+import { Height } from '@ephox/sugar';
 import Devices from './Devices';
+import Orientation from '../../touch/view/Orientation';
 
 // Green zone is the area below the toolbar and above the keyboard, its considered the viewable
 // region that is not obstructed by the keyboard. If the keyboard is down, then the Green Zone is larger.

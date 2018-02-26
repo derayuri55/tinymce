@@ -1,6 +1,11 @@
-import { Chain,  Keys,  Logger,  Pipeline } from '@ephox/agar';
+import { Chain } from '@ephox/agar';
+import { Keys } from '@ephox/agar';
+import { Logger } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
 import { Merger } from '@ephox/katamari';
-import { ActionChains, ApiChains, Editor } from '@ephox/mcagar';
+import { ActionChains } from '@ephox/mcagar';
+import { ApiChains } from '@ephox/mcagar';
+import { Editor } from '@ephox/mcagar';
 import Theme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';
 

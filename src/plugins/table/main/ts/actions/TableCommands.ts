@@ -8,19 +8,43 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr, Fun, Option } from '@ephox/katamari';
-import { CopyRows, TableFill, TableLookup } from '@ephox/snooker';
-import { Element, Insert, Remove, Replication } from '@ephox/sugar';
+import { Arr } from '@ephox/katamari';
+import { Fun } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
+import { CopyRows } from '@ephox/snooker';
+import { TableFill } from '@ephox/snooker';
+import { TableLookup } from '@ephox/snooker';
+import { Insert } from '@ephox/sugar';
+import { Remove } from '@ephox/sugar';
+import { Replication } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
 import Tools from 'tinymce/core/api/util/Tools';
 import Util from '../alien/Util';
 import TableTargets from '../queries/TableTargets';
-import CellDialog from '../ui/CellDialog';
-import RowDialog from '../ui/RowDialog';
 import TableDialog from '../ui/TableDialog';
+import RowDialog from '../ui/RowDialog';
+import CellDialog from '../ui/CellDialog';
 
 const each = Tools.each;
 
-const registerCommands = function (editor, actions, cellSelection, selections, clipboardRows) {
+let clipboardRows = Option.none();
+
+const getClipboardRows = function () {
+  return clipboardRows.fold(function () {
+    return;
+  }, function (rows) {
+    return Arr.map(rows, function (row) {
+      return row.dom();
+    });
+  });
+};
+
+const setClipboardRows = function (rows) {
+  const sugarRows = Arr.map(rows, Element.fromDom);
+  clipboardRows = Option.from(sugarRows);
+};
+
+const registerCommands = function (editor, actions, cellSelection, selections) {
   const isRoot = Util.getIsRoot(editor);
   const eraseTable = function () {
     const cell = Element.fromDom(editor.dom.getParent(editor.selection.getStart(), 'th,td'));
@@ -70,7 +94,7 @@ const registerCommands = function (editor, actions, cellSelection, selections, c
 
   const pasteOnSelection = function (execute) {
     // If we have clipboard rows to paste
-    clipboardRows.get().each(function (rows) {
+    clipboardRows.each(function (rows) {
       const clonedRows = Arr.map(rows, function (row) {
         return Replication.deep(row);
       });
@@ -124,12 +148,12 @@ const registerCommands = function (editor, actions, cellSelection, selections, c
     },
 
     mceTableCutRow (grid) {
-      clipboardRows.set(copyRowSelection());
+      clipboardRows = copyRowSelection();
       actOnSelection(actions.deleteRow);
     },
 
     mceTableCopyRow (grid) {
-      clipboardRows.set(copyRowSelection());
+      clipboardRows = copyRowSelection();
     },
 
     mceTablePasteRowBefore (grid) {
@@ -159,5 +183,7 @@ const registerCommands = function (editor, actions, cellSelection, selections, c
 };
 
 export default {
-  registerCommands
+  registerCommands,
+  getClipboardRows,
+  setClipboardRows
 };

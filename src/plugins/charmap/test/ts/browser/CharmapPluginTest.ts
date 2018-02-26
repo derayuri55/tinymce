@@ -1,5 +1,6 @@
 import { Pipeline } from '@ephox/agar';
-import { LegacyUnit, TinyLoader } from '@ephox/mcagar';
+import { LegacyUnit } from '@ephox/mcagar';
+import { TinyLoader } from '@ephox/mcagar';
 import Plugin from 'tinymce/plugins/charmap/Plugin';
 import Theme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';

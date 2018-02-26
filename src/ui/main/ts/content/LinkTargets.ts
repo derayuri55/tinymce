@@ -1,8 +1,3 @@
-import { Arr, Fun, Id } from '@ephox/katamari';
-import { Element, SelectorFilter } from '@ephox/sugar';
-
-import Tools from 'tinymce/core/api/util/Tools';
-
 /**
  * LinkTargets.js
  *
@@ -12,6 +7,13 @@ import Tools from 'tinymce/core/api/util/Tools';
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
  */
+
+import { Arr } from '@ephox/katamari';
+import { Fun } from '@ephox/katamari';
+import { Id } from '@ephox/katamari';
+import { Element } from '@ephox/sugar';
+import { SelectorFilter } from '@ephox/sugar';
+import Tools from 'tinymce/core/api/util/Tools';
 
 /**
  * This module is enables you to get anything that you can link to in a element.

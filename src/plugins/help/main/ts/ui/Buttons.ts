@@ -16,7 +16,7 @@ const register = function (editor, pluginUrl) {
     onclick: Dialog.open(editor, pluginUrl)
   });
 
-  editor.addMenuItem('help', {
+  editor.addMenuItem('Help', {
     text: 'Help',
     icon: 'help',
     context: 'help',

@@ -1,4 +1,5 @@
-import { Assertions, Pipeline } from '@ephox/agar';
+import { Assertions } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
 import { TinyLoader } from '@ephox/mcagar';
 import Theme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';

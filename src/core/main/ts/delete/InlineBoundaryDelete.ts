@@ -8,11 +8,13 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Fun, Option, Options } from '@ephox/katamari';
+import { Fun } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
+import { Options } from '@ephox/katamari';
 import { Element } from '@ephox/sugar';
 import CaretFinder from '../caret/CaretFinder';
 import CaretPosition from '../caret/CaretPosition';
-import * as CaretUtils from '../caret/CaretUtils';
+import CaretUtils from '../caret/CaretUtils';
 import DeleteElement from './DeleteElement';
 import BoundaryCaret from '../keyboard/BoundaryCaret';
 import BoundaryLocation from '../keyboard/BoundaryLocation';

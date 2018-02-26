@@ -25,8 +25,6 @@ import SetSelectionContent from '../../selection/SetSelectionContent';
 import Tools from '../util/Tools';
 import * as ElementSelection from '../../selection/ElementSelection';
 import { moveEndPoint } from 'tinymce/core/selection/SelectionUtils';
-import { NativeSelection } from './NativeTypes';
-import { Editor } from 'tinymce/core/api/Editor';
 
 /**
  * This class handles text and control selection it's an crossbrowser utility class.
@@ -58,7 +56,7 @@ const isValidRange = function (rng: Range) {
   }
 };
 
-export interface Selection {
+interface EditorSelection {
   bookmarkManager: any;
   controlSelection: ControlSelection;
   dom: any;
@@ -76,7 +74,7 @@ export interface Selection {
   isForward: () => boolean;
   setNode: (elm: Element) => Element;
   getNode: () => Element;
-  getSel: () => NativeSelection;
+  getSel: () => Selection;
   setRng: (rng: Range, forward?: boolean) => void;
   getRng: () => Range;
   getStart: (real?: boolean) => Element;
@@ -105,7 +103,7 @@ export interface Selection {
  * @param {tinymce.dom.Serializer} serializer DOM serialization class to use for getContent.
  * @param {tinymce.Editor} editor Editor instance of the selection.
  */
-export const Selection = function (dom, win: Window, serializer, editor: Editor): Selection {
+const Selection = function (dom, win: Window, serializer, editor): EditorSelection {
   let bookmarkManager, controlSelection: ControlSelection;
   let selectedRange, explicitRange, selectorChangedData;
 
@@ -272,7 +270,7 @@ export const Selection = function (dom, win: Window, serializer, editor: Editor)
    * @method getSel
    * @return {Selection} Internal browser selection object.
    */
-  const getSel = (): NativeSelection => win.getSelection ? win.getSelection() : (<any> win.document).selection;
+  const getSel = (): Selection => win.getSelection ? win.getSelection() : (<any> win.document).selection;
 
   /**
    * Returns the browsers internal range object.
@@ -634,3 +632,7 @@ export const Selection = function (dom, win: Window, serializer, editor: Editor)
 
   return exports;
 };
+
+export { EditorSelection as Selection };
+
+export default Selection;

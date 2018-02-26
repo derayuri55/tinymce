@@ -11,7 +11,6 @@
 import { Fun } from '@ephox/katamari';
 import Tools from 'tinymce/core/api/util/Tools';
 import Util from '../alien/Util';
-import { getColorPickerCallback } from '../api/Settings';
 
 /**
  * @class tinymce.table.ui.Helpers
@@ -89,7 +88,7 @@ const extractAdvancedStyles = function (dom, elm) {
 
 const createStyleForm = function (editor) {
   const createColorPickAction = function () {
-    const colorPickerCallback = getColorPickerCallback(editor);
+    const colorPickerCallback = editor.settings.color_picker_callback;
     if (colorPickerCallback) {
       return function (evt) {
         return colorPickerCallback.call(

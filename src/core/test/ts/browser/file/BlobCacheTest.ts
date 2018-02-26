@@ -1,5 +1,7 @@
 import { Assertions } from '@ephox/agar';
-import { Blob, Uint8Array, Window } from '@ephox/sand';
+import { Blob } from '@ephox/sand';
+import { Uint8Array } from '@ephox/sand';
+import { Window } from '@ephox/sand';
 import BlobCache from 'tinymce/core/api/file/BlobCache';
 import { UnitTest } from '@ephox/bedrock';
 

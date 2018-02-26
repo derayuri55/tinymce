@@ -11,7 +11,6 @@
 import { Fun } from '@ephox/katamari';
 import Tools from 'tinymce/core/api/util/Tools';
 import TableDialog from './TableDialog';
-import { getToolbar } from '../api/Settings';
 
 const each = Tools.each;
 
@@ -126,13 +125,22 @@ const addToolbars = function (editor) {
     return selectorMatched;
   };
 
-  const toolbar = getToolbar(editor);
-  if (toolbar.length > 0) {
-    editor.addContextToolbar(
-      isTable,
-      toolbar.join(' ')
-    );
+  let toolbarItems = editor.settings.table_toolbar;
+
+  if (toolbarItems === '' || toolbarItems === false) {
+    return;
   }
+
+  if (!toolbarItems) {
+    toolbarItems = 'tableprops tabledelete | ' +
+      'tableinsertrowbefore tableinsertrowafter tabledeleterow | ' +
+      'tableinsertcolbefore tableinsertcolafter tabledeletecol';
+  }
+
+  editor.addContextToolbar(
+    isTable,
+    toolbarItems
+  );
 };
 
 export default {

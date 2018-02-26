@@ -1,7 +1,7 @@
 import { LegacyUnit } from '@ephox/mcagar';
 import { Pipeline } from '@ephox/agar';
 import Env from 'tinymce/core/api/Env';
-import * as CaretUtils from 'tinymce/core/caret/CaretUtils';
+import CaretUtils from 'tinymce/core/caret/CaretUtils';
 import CaretPosition from 'tinymce/core/caret/CaretPosition';
 import Zwsp from 'tinymce/core/text/Zwsp';
 import $ from 'tinymce/core/api/dom/DomQuery';
@@ -168,12 +168,6 @@ UnitTest.asynctest('browser.tinymce.core.CaretUtilTest', function () {
     LegacyUnit.strictEqual(CaretUtils.isBeforeContentEditableFalse(CaretPosition(getRoot(), 1)), true);
     LegacyUnit.strictEqual(CaretUtils.isBeforeContentEditableFalse(CaretPosition(getRoot(), 2)), false);
     LegacyUnit.strictEqual(CaretUtils.isBeforeContentEditableFalse(CaretPosition(getRoot(), 3)), false);
-  });
-
-  suite.test('isBeforeContentEditableFalse/isAfterContentEditableFalse on bogus all element', function () {
-    setupHtml('<input><p contentEditable="false" data-mce-bogus="all"></p><input>');
-    LegacyUnit.strictEqual(CaretUtils.isBeforeContentEditableFalse(CaretPosition(getRoot(), 1)), false);
-    LegacyUnit.strictEqual(CaretUtils.isAfterContentEditableFalse(CaretPosition(getRoot(), 2)), false);
   });
 
   suite.test('isAfterContentEditableFalse', function () {

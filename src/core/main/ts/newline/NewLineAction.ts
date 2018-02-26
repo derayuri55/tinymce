@@ -8,7 +8,9 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Adt,  Arr,  Option } from '@ephox/katamari';
+import { Adt } from '@ephox/katamari';
+import { Arr } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
 import Settings from '../api/Settings';
 import ContextSelectors from './ContextSelectors';
 import NewLineUtils from './NewLineUtils';

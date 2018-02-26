@@ -9,7 +9,7 @@
  */
 
 import { Type } from '@ephox/katamari';
-import * as CaretContainer from '../caret/CaretContainer';
+import CaretContainer from '../caret/CaretContainer';
 import CaretPosition from '../caret/CaretPosition';
 import { Selection } from '../api/dom/Selection';
 

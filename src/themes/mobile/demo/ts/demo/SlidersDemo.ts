@@ -1,7 +1,9 @@
-import { Attachment, Container, Gui, GuiFactory } from '@ephox/alloy';
+import { GuiFactory } from '@ephox/alloy';
+import { Attachment } from '@ephox/alloy';
+import { Gui } from '@ephox/alloy';
+import { Container } from '@ephox/alloy';
 import { Fun } from '@ephox/katamari';
 import { SelectorFind } from '@ephox/sugar';
-
 import ColorSlider from 'tinymce/themes/mobile/ui/ColorSlider';
 import FontSizeSlider from 'tinymce/themes/mobile/ui/FontSizeSlider';
 import UiDomFactory from 'tinymce/themes/mobile/util/UiDomFactory';

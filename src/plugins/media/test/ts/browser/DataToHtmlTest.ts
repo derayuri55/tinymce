@@ -1,11 +1,13 @@
-import { ApproxStructure, Assertions, Pipeline, Waiter } from '@ephox/agar';
-import { UnitTest } from '@ephox/bedrock';
+import { ApproxStructure } from '@ephox/agar';
+import { Assertions } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
+import { Waiter } from '@ephox/agar';
 import { TinyLoader } from '@ephox/mcagar';
 import { Element } from '@ephox/sugar';
-
 import DataToHtml from 'tinymce/plugins/media/core/DataToHtml';
 import Plugin from 'tinymce/plugins/media/Plugin';
 import Theme from 'tinymce/themes/modern/Theme';
+import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.core.DataToHtmlTest', function () {
   const success = arguments[arguments.length - 2];

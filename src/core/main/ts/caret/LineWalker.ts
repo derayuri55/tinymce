@@ -8,44 +8,42 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
+import Fun from '../util/Fun';
 import Arr from '../util/Arr';
-import * as Dimensions from '../dom/Dimensions';
-import * as CaretCandidate from './CaretCandidate';
-import * as CaretUtils from './CaretUtils';
-import { CaretWalker } from './CaretWalker';
+import Dimensions from '../dom/Dimensions';
+import CaretCandidate from './CaretCandidate';
+import CaretUtils from './CaretUtils';
+import CaretWalker from './CaretWalker';
 import CaretPosition from './CaretPosition';
-import * as ClientRect from '../geom/ClientRect';
-import { Fun } from '@ephox/katamari';
+import ClientRect from '../geom/ClientRect';
 
-export interface ClientRectLine extends ClientRect {
-  line: number;
-}
+/**
+ * This module lets you walk the document line by line
+ * returing nodes and client rects for each line.
+ *
+ * @private
+ * @class tinymce.caret.LineWalker
+ */
 
-export enum VDirection {
-  Up = -1,
-  Down = 1
-}
+const curry = Fun.curry;
 
-type PosPredicate = (rect1: ClientRect, rect2: ClientRect) => boolean;
-type RectPredicate = (rect: ClientRectLine) => boolean;
-
-const findUntil = (direction: VDirection, root: Node, predicateFn: (node: Node) => boolean, node: Node): void => {
-  while ((node = CaretUtils.findNode(node, direction, CaretCandidate.isEditableCaretCandidate, root))) {
+const findUntil = function (direction, rootNode, predicateFn, node) {
+  while ((node = CaretUtils.findNode(node, direction, CaretCandidate.isEditableCaretCandidate, rootNode))) {
     if (predicateFn(node)) {
       return;
     }
   }
 };
 
-const walkUntil = (direction: VDirection, isAboveFn: PosPredicate, isBeflowFn: PosPredicate, root: Node, predicateFn: RectPredicate, caretPosition: CaretPosition): ClientRectLine[] => {
+const walkUntil = function (direction, isAboveFn, isBeflowFn, rootNode, predicateFn, caretPosition) {
   let line = 0, node;
   const result = [];
   let targetClientRect;
 
-  const add = function (node: Node) {
+  const add = function (node) {
     let i, clientRect, clientRects;
 
-    clientRects = Dimensions.getClientRects([node]);
+    clientRects = Dimensions.getClientRects(node);
     if (direction === -1) {
       clientRects = clientRects.reverse();
     }
@@ -77,18 +75,24 @@ const walkUntil = (direction: VDirection, isAboveFn: PosPredicate, isBeflowFn: P
 
   node = caretPosition.getNode();
   add(node);
-  findUntil(direction, root, add, node);
+  findUntil(direction, rootNode, add, node);
 
   return result;
 };
 
-const aboveLineNumber = (lineNumber: number, clientRect: ClientRectLine) => clientRect.line > lineNumber;
-const isLineNumber = (lineNumber: number, clientRect: ClientRectLine) => clientRect.line === lineNumber;
-const upUntil = Fun.curry(walkUntil, VDirection.Up, ClientRect.isAbove, ClientRect.isBelow) as (root: Node, predicateFn: RectPredicate, caretPosition: CaretPosition) => ClientRectLine[];
-const downUntil = Fun.curry(walkUntil, VDirection.Down, ClientRect.isBelow, ClientRect.isAbove) as (root: Node, predicateFn: RectPredicate, caretPosition: CaretPosition) => ClientRectLine[];
+const aboveLineNumber = function (lineNumber, clientRect) {
+  return clientRect.line > lineNumber;
+};
 
-const positionsUntil = (direction: VDirection, root: Node, predicateFn: RectPredicate, node: Node): ClientRectLine[] => {
-  const caretWalker = CaretWalker(root);
+const isLine = function (lineNumber, clientRect) {
+  return clientRect.line === lineNumber;
+};
+
+const upUntil = curry(walkUntil, -1, ClientRect.isAbove, ClientRect.isBelow);
+const downUntil = curry(walkUntil, 1, ClientRect.isBelow, ClientRect.isAbove);
+
+const positionsUntil = function (direction, rootNode, predicateFn, node) {
+  const caretWalker = CaretWalker(rootNode);
   let walkFn, isBelowFn, isAboveFn,
     caretPosition;
   const result = [];
@@ -145,13 +149,22 @@ const positionsUntil = (direction: VDirection, root: Node, predicateFn: RectPred
   return result;
 };
 
-const isAboveLine = (lineNumber: number) => (clientRect: ClientRectLine) => aboveLineNumber(lineNumber, clientRect);
-const isLine = (lineNumber: number) => (clientRect: ClientRectLine) => isLineNumber(lineNumber, clientRect);
-
-export {
+export default {
   upUntil,
   downUntil,
+
+  /**
+   * Find client rects with line and caret position until the predicate returns true.
+   *
+   * @method positionsUntil
+   * @param {Number} direction Direction forward/backward 1/-1.
+   * @param {DOMNode} rootNode Root node to walk within.
+   * @param {function} predicateFn Gets the client rect as it's input.
+   * @param {DOMNode} node Node to start walking from.
+   * @return {Array} Array of client rects with line and position properties.
+   */
   positionsUntil,
-  isAboveLine,
-  isLine
+
+  isAboveLine: curry(aboveLineNumber),
+  isLine: curry(isLine)
 };

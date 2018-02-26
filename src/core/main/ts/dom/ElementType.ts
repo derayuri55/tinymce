@@ -8,7 +8,8 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr, Fun } from '@ephox/katamari';
+import { Arr } from '@ephox/katamari';
+import { Fun } from '@ephox/katamari';
 import { Node } from '@ephox/sugar';
 
 const blocks = [

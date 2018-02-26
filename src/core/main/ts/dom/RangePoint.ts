@@ -9,7 +9,7 @@
  */
 
 import { Arr } from '@ephox/katamari';
-import * as ClientRect from '../geom/ClientRect';
+import ClientRect from '../geom/ClientRect';
 
 const isXYWithinRange = function (clientX, clientY, range) {
   if (range.collapsed) {

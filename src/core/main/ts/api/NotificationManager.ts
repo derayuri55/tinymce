@@ -8,7 +8,8 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr, Option } from '@ephox/katamari';
+import { Arr } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
 import EditorView from '../EditorView';
 import NotificationManagerImpl from '../ui/NotificationManagerImpl';
 import Delay from './util/Delay';

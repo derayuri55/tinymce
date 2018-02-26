@@ -11,23 +11,29 @@
 import Fun from '../util/Fun';
 import TreeWalker from '../api/dom/TreeWalker';
 import NodeType from '../dom/NodeType';
-import * as CaretContainer from './CaretContainer';
-import * as CaretCandidate from './CaretCandidate';
+import CaretContainer from './CaretContainer';
+import CaretCandidate from './CaretCandidate';
 import { CaretPosition } from 'tinymce/core/caret/CaretPosition';
 import { Option } from '@ephox/katamari';
-import { HDirection } from 'tinymce/core/caret/CaretWalker';
-import { isFakeCaretTarget } from 'tinymce/core/caret/FakeCaret';
 
-const isContentEditableTrue = NodeType.isContentEditableTrue;
-const isContentEditableFalse = NodeType.isContentEditableFalse;
-const isBlockLike = NodeType.matchStyleValues('display', 'block table table-cell table-caption list-item');
-const isCaretContainer = CaretContainer.isCaretContainer;
-const isCaretContainerBlock = CaretContainer.isCaretContainerBlock;
-const curry = Fun.curry;
-const isElement = NodeType.isElement;
-const isCaretCandidate = CaretCandidate.isCaretCandidate;
-const isForwards = (direction: HDirection) => direction > 0;
-const isBackwards = (direction: HDirection) => direction < 0;
+/**
+ * Utility functions shared by the caret logic.
+ *
+ * @private
+ * @class tinymce.caret.CaretUtils
+ */
+
+const isContentEditableTrue = NodeType.isContentEditableTrue,
+  isContentEditableFalse = NodeType.isContentEditableFalse,
+  isBlockLike = NodeType.matchStyleValues('display', 'block table table-cell table-caption list-item'),
+  isCaretContainer = CaretContainer.isCaretContainer,
+  isCaretContainerBlock = CaretContainer.isCaretContainerBlock,
+  curry = Fun.curry,
+  isElement = NodeType.isElement,
+  isCaretCandidate = CaretCandidate.isCaretCandidate;
+
+const isForwards = (direction: number) => direction > 0;
+const isBackwards = (direction: number) => direction < 0;
 
 const skipCaretContainers = function (walk, shallow?: boolean): Node {
   let node;
@@ -99,15 +105,15 @@ const getParentBlock = (node: Node, rootNode?: Node) => {
   return null;
 };
 
-const isInSameBlock = (caretPosition1: CaretPosition, caretPosition2: CaretPosition, rootNode?: Node): boolean => {
+const isInSameBlock = (caretPosition1: CaretPosition, caretPosition2: CaretPosition, rootNode?: Node) => {
   return getParentBlock(caretPosition1.container(), rootNode) === getParentBlock(caretPosition2.container(), rootNode);
 };
 
-const isInSameEditingHost = (caretPosition1: CaretPosition, caretPosition2: CaretPosition, rootNode?: Node): boolean => {
+const isInSameEditingHost = (caretPosition1: CaretPosition, caretPosition2: CaretPosition, rootNode?: Node) => {
   return getEditingHost(caretPosition1.container(), rootNode) === getEditingHost(caretPosition2.container(), rootNode);
 };
 
-const getChildNodeAtRelativeOffset = (relativeOffset: number, caretPosition: CaretPosition): Node => {
+const getChildNodeAtRelativeOffset = function (relativeOffset: number, caretPosition: CaretPosition) {
   let container, offset;
 
   if (!caretPosition) {
@@ -138,11 +144,11 @@ const beforeAfter = (before: boolean, node: Node): Range => {
   return range;
 };
 
-const isNodesInSameBlock = (root: Node, node1: Node, node2: Node): boolean => {
-  return getParentBlock(node1, root) === getParentBlock(node2, root);
+const isNodesInSameBlock = function (rootNode: Node, node1: Node, node2: Node) {
+  return getParentBlock(node1, rootNode) === getParentBlock(node2, rootNode);
 };
 
-const lean = (left: boolean, root: Node, node: Node): Node => {
+const lean = function (left: boolean, rootNode: Node, node: Node) {
   let sibling, siblingName;
 
   if (left) {
@@ -151,7 +157,7 @@ const lean = (left: boolean, root: Node, node: Node): Node => {
     siblingName = 'nextSibling';
   }
 
-  while (node && node !== root) {
+  while (node && node !== rootNode) {
     sibling = node[siblingName];
 
     if (isCaretContainer(sibling)) {
@@ -159,7 +165,7 @@ const lean = (left: boolean, root: Node, node: Node): Node => {
     }
 
     if (isContentEditableFalse(sibling)) {
-      if (isNodesInSameBlock(root, sibling, node)) {
+      if (isNodesInSameBlock(rootNode, sibling, node)) {
         return sibling;
       }
 
@@ -179,10 +185,10 @@ const lean = (left: boolean, root: Node, node: Node): Node => {
 const before = curry(beforeAfter, true) as (node: Node) => Range;
 const after = curry(beforeAfter, false) as (node: Node) => Range;
 
-const normalizeRange = (direction: number, root: Node, range: Range): Range => {
+const normalizeRange = (direction: number, rootNode: Node, range: Range): Range => {
   let node, container, offset, location;
-  const leanLeft = curry(lean, true, root);
-  const leanRight = curry(lean, false, root);
+  const leanLeft = curry(lean, true, rootNode);
+  const leanRight = curry(lean, false, rootNode);
 
   container = range.startContainer;
   offset = range.startOffset;
@@ -196,14 +202,14 @@ const normalizeRange = (direction: number, root: Node, range: Range): Range => {
 
     if (location === 'before') {
       node = container.nextSibling;
-      if (isFakeCaretTarget(node)) {
+      if (isContentEditableFalse(node)) {
         return before(node);
       }
     }
 
     if (location === 'after') {
       node = container.previousSibling;
-      if (isFakeCaretTarget(node)) {
+      if (isContentEditableFalse(node)) {
         return after(node);
       }
     }
@@ -287,34 +293,14 @@ const normalizeRange = (direction: number, root: Node, range: Range): Range => {
 };
 
 const isNextToContentEditableFalse = (relativeOffset: number, caretPosition: CaretPosition) => {
-  const node = getChildNodeAtRelativeOffset(relativeOffset, caretPosition);
-  return isContentEditableFalse(node) && !NodeType.isBogusAll(node);
-};
-
-const isNextToTable = (relativeOffset: number, caretPosition: CaretPosition) => {
-  return NodeType.isTable(getChildNodeAtRelativeOffset(relativeOffset, caretPosition));
+  return isContentEditableFalse(getChildNodeAtRelativeOffset(relativeOffset, caretPosition));
 };
 
 const getRelativeCefElm = (forward: boolean, caretPosition: CaretPosition) => {
   return Option.from(getChildNodeAtRelativeOffset(forward ? 0 : -1, caretPosition)).filter(isContentEditableFalse);
 };
 
-const getNormalizedRangeEndPoint = (direction: number, root: Node, range: Range): CaretPosition => {
-  const normalizedRange = normalizeRange(direction, root, range);
-
-  if (direction === -1) {
-    return CaretPosition.fromRangeStart(normalizedRange);
-  }
-
-  return CaretPosition.fromRangeEnd(normalizedRange);
-};
-
-const isBeforeContentEditableFalse = curry(isNextToContentEditableFalse, 0) as (caretPosition: CaretPosition) => boolean;
-const isAfterContentEditableFalse = curry(isNextToContentEditableFalse, -1) as (caretPosition: CaretPosition) => boolean;
-const isBeforeTable = curry(isNextToTable, 0) as (caretPosition: CaretPosition) => boolean;
-const isAfterTable = curry(isNextToTable, -1) as (caretPosition: CaretPosition) => boolean;
-
-export {
+export default {
   isForwards,
   isBackwards,
   findNode,
@@ -322,11 +308,8 @@ export {
   getParentBlock,
   isInSameBlock,
   isInSameEditingHost,
-  isBeforeContentEditableFalse,
-  isAfterContentEditableFalse,
-  isBeforeTable,
-  isAfterTable,
+  isBeforeContentEditableFalse: curry(isNextToContentEditableFalse, 0) as (caretPosition: CaretPosition) => boolean,
+  isAfterContentEditableFalse: curry(isNextToContentEditableFalse, -1) as (caretPosition: CaretPosition) => boolean,
   normalizeRange,
-  getRelativeCefElm,
-  getNormalizedRangeEndPoint
+  getRelativeCefElm
 };

@@ -9,14 +9,15 @@
  */
 
 import { Option } from '@ephox/katamari';
-import { Compare, Focus, Element } from '@ephox/sugar';
+import { Compare } from '@ephox/sugar';
+import { Focus } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
 import Env from '../api/Env';
 import CaretFinder from '../caret/CaretFinder';
 import * as ElementType from '../dom/ElementType';
-import * as RangeNodes from '../selection/RangeNodes';
+import RangeNodes from '../selection/RangeNodes';
 import SelectionBookmark from '../selection/SelectionBookmark';
 import { Selection } from '../api/dom/Selection';
-import { CaretPosition } from '../caret/CaretPosition';
 
 const getContentEditableHost = function (editor, node) {
   return editor.dom.getParent(node, function (node) {
@@ -40,12 +41,16 @@ const getFocusInElement = function (root, rng) {
   });
 };
 
-const normalizeSelection = (editor, rng: Range): void => {
+const normalizeSelection = function (editor, rng) {
   getFocusInElement(Element.fromDom(editor.getBody()), rng).bind(function (elm) {
     return CaretFinder.firstPositionIn(elm.dom());
   }).fold(
-    () => editor.selection.normalize(),
-    (caretPos: CaretPosition) => editor.selection.setRng(caretPos.toRange())
+    function () {
+      editor.selection.normalize();
+    },
+    function (caretPos) {
+      editor.selection.setRng(caretPos.toRange());
+    }
   );
 };
 

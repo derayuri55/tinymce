@@ -8,7 +8,8 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Element, Selectors } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Selectors } from '@ephox/sugar';
 import NodeType from '../../dom/NodeType';
 import RangePoint from '../../dom/RangePoint';
 import Env from '../Env';

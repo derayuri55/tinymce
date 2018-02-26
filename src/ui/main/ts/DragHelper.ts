@@ -69,7 +69,9 @@ export default function (id, settings) {
 
   settings = settings || {};
 
-  const handleElement = doc.getElementById(settings.handle || id);
+  function getHandleElm() {
+    return doc.getElementById(settings.handle || id);
+  }
 
   start = function (e) {
     const docSize = getDocumentSize(doc);
@@ -79,7 +81,7 @@ export default function (id, settings) {
 
     e.preventDefault();
     downButton = e.button;
-    handleElm = handleElement;
+    handleElm = getHandleElm();
     startX = e.screenX;
     startY = e.screenY;
 
@@ -137,8 +139,8 @@ export default function (id, settings) {
    * @method destroy
    */
   this.destroy = function () {
-    DomQuery(handleElement).off();
+    DomQuery(getHandleElm()).off();
   };
 
-  DomQuery(handleElement).on('mousedown touchstart', start);
+  DomQuery(getHandleElm()).on('mousedown touchstart', start);
 }

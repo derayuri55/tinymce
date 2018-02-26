@@ -1,6 +1,7 @@
 import { Pipeline } from '@ephox/agar';
-import { LegacyUnit, TinyLoader } from '@ephox/mcagar';
-import * as CaretContainer from 'tinymce/core/caret/CaretContainer';
+import { LegacyUnit } from '@ephox/mcagar';
+import { TinyLoader } from '@ephox/mcagar';
+import CaretContainer from 'tinymce/core/caret/CaretContainer';
 import Env from 'tinymce/core/api/Env';
 import Zwsp from 'tinymce/core/text/Zwsp';
 import Theme from 'tinymce/themes/modern/Theme';

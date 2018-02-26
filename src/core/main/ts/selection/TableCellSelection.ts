@@ -9,7 +9,8 @@
  */
 
 import { Arr } from '@ephox/katamari';
-import { Element, SelectorFilter } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { SelectorFilter } from '@ephox/sugar';
 import * as ElementType from '../dom/ElementType';
 import MultiRange from './MultiRange';
 

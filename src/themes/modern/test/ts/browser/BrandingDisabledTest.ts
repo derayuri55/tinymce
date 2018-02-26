@@ -1,9 +1,10 @@
-import { Logger, Pipeline, UiFinder } from '@ephox/agar';
-import { UnitTest } from '@ephox/bedrock';
+import { Logger } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
+import { UiFinder } from '@ephox/agar';
 import { TinyLoader } from '@ephox/mcagar';
 import { Element } from '@ephox/sugar';
-
 import Theme from 'tinymce/themes/modern/Theme';
+import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.tinymce.themes.modern.test.BradingDisabledTest', function () {
   const success = arguments[arguments.length - 2];

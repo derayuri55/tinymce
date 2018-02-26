@@ -8,7 +8,13 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr, Fun, Obj, Option, Strings, Struct, Type } from '@ephox/katamari';
+import { Arr } from '@ephox/katamari';
+import { Fun } from '@ephox/katamari';
+import { Obj } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
+import { Strings } from '@ephox/katamari';
+import { Struct } from '@ephox/katamari';
+import { Type } from '@ephox/katamari';
 import { PlatformDetection } from '@ephox/sand';
 import Tools from './api/util/Tools';
 
@@ -154,7 +160,7 @@ const get = function (editor, name) {
   return Option.from(editor.settings[name]);
 };
 
-const getFiltered = (predicate: (x: any) => boolean, editor, name: string) => Option.from(editor.settings[name]).filter(predicate);
+const getFiltered = (predicate: Function, editor, name: string) => Option.from(editor.settings[name]).filter(predicate);
 
 const getString = Fun.curry(getFiltered, Type.isString);
 

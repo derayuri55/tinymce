@@ -1,9 +1,11 @@
 import { Arr } from '@ephox/katamari';
-import { Compare, Element, Node, TransformFind } from '@ephox/sugar';
-
-import UiDomFactory from '../util/UiDomFactory';
+import { Compare } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Node } from '@ephox/sugar';
+import { TransformFind } from '@ephox/sugar';
 import SizeSlider from './SizeSlider';
 import ToolbarWidgets from './ToolbarWidgets';
+import UiDomFactory from '../util/UiDomFactory';
 
 const headings = [ 'p', 'h3', 'h2', 'h1' ];
 

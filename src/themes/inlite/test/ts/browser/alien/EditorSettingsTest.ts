@@ -1,9 +1,10 @@
-import { Assertions, Pipeline, Step } from '@ephox/agar';
-import { UnitTest } from '@ephox/bedrock';
-
-import { Editor } from 'tinymce/core/api/Editor';
+import { Assertions } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
+import { Step } from '@ephox/agar';
+import Editor from 'tinymce/core/api/Editor';
 import EditorManager from 'tinymce/core/api/EditorManager';
 import EditorSettings from 'tinymce/themes/inlite/alien/EditorSettings';
+import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.alien.EditorSettingsTest', function () {
   const success = arguments[arguments.length - 2];

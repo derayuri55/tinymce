@@ -1,5 +1,9 @@
-import { Pipeline, RawAssertions, Step } from '@ephox/agar';
-import { TinyApis, TinyLoader, TinyUi } from '@ephox/mcagar';
+import { Pipeline } from '@ephox/agar';
+import { RawAssertions } from '@ephox/agar';
+import { Step } from '@ephox/agar';
+import { TinyApis } from '@ephox/mcagar';
+import { TinyLoader } from '@ephox/mcagar';
+import { TinyUi } from '@ephox/mcagar';
 import CodePlugin from 'tinymce/plugins/code/Plugin';
 import ModernTheme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';

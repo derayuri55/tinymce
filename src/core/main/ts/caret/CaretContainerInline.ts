@@ -66,11 +66,9 @@ const insertAfter = (node: Node) => {
 };
 
 const insertInline = (before: boolean, node: Node) => before ? insertBefore(node) : insertAfter(node);
-const insertInlineBefore = Fun.curry(insertInline, true) as (node: Node) => Text;
-const insertInlineAfter = Fun.curry(insertInline, false) as (node: Node) => Text;
 
-export {
+export default {
   insertInline,
-  insertInlineBefore,
-  insertInlineAfter
+  insertInlineBefore: Fun.curry(insertInline, true) as (node: Node) => Text,
+  insertInlineAfter: Fun.curry(insertInline, false) as (node: Node) => Text
 };

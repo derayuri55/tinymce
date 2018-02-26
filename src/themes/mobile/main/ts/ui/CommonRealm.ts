@@ -1,5 +1,9 @@
-import { Behaviour, Button, Container, GuiFactory, Replacing, Swapping } from '@ephox/alloy';
-
+import { Behaviour } from '@ephox/alloy';
+import { Replacing } from '@ephox/alloy';
+import { Swapping } from '@ephox/alloy';
+import { GuiFactory } from '@ephox/alloy';
+import { Button } from '@ephox/alloy';
+import { Container } from '@ephox/alloy';
 import UiDomFactory from '../util/UiDomFactory';
 
 const makeEditSwitch = function (webapp) {

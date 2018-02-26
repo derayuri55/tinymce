@@ -189,13 +189,18 @@ const showDialog = function (editor) {
 
   embedTextBox[embedChange] = updateValueOnChange;
 
-  const body = [
-    {
+  win = editor.windowManager.open({
+    title: 'Insert/edit media',
+    data,
+    bodyType: 'tabpanel',
+    body: [
+      {
         title: 'General',
         type: 'form',
         items: generalFormItems
-    },
-    {
+      },
+
+      {
         title: 'Embed',
         type: 'container',
         layout: 'flex',
@@ -211,18 +216,14 @@ const showDialog = function (editor) {
           },
           embedTextBox
         ]
+      },
+
+      {
+        title: 'Advanced',
+        type: 'form',
+        items: advancedFormItems
       }
-  ];
-
-  if (advancedFormItems.length > 0) {
-    body.push({ title: 'Advanced', type: 'form', items: advancedFormItems });
-  }
-
-  win = editor.windowManager.open({
-    title: 'Insert/edit media',
-    data,
-    bodyType: 'tabpanel',
-    body,
+    ],
     onSubmit () {
       SizeManager.updateSize(win);
       submitForm(win, editor);

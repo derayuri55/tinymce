@@ -1,9 +1,9 @@
 import { Pipeline } from '@ephox/agar';
-import { UnitTest } from '@ephox/bedrock';
-import { LegacyUnit, TinyLoader } from '@ephox/mcagar';
-
+import { LegacyUnit } from '@ephox/mcagar';
+import { TinyLoader } from '@ephox/mcagar';
 import Plugin from 'tinymce/plugins/media/Plugin';
 import Theme from 'tinymce/themes/modern/Theme';
+import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.tinymce.plugins.media.ContentFormatsTest', function () {
   const success = arguments[arguments.length - 2];
@@ -59,7 +59,7 @@ UnitTest.asynctest('browser.tinymce.plugins.media.ContentFormatsTest', function 
     );
 
     LegacyUnit.equal(editor.getContent(),
-      '<p><iframe src="320x240.ogg" allowfullscreen="allowfullscreen">text<a href="#">link</a></iframe></p>'
+      '<p><iframe src="320x240.ogg" width="300" height="150" allowfullscreen="allowfullscreen">text<a href="#">link</a></iframe></p>'
     );
   });
 

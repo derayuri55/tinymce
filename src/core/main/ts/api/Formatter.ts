@@ -8,7 +8,8 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Cell, Fun } from '@ephox/katamari';
+import { Cell } from '@ephox/katamari';
+import { Fun } from '@ephox/katamari';
 import ApplyFormat from '../fmt/ApplyFormat';
 import CaretFormat from '../fmt/CaretFormat';
 import FormatChanged from '../fmt/FormatChanged';

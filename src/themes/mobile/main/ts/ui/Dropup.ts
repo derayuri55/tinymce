@@ -1,6 +1,9 @@
-import { Behaviour, Container, GuiFactory, Replacing, Sliding } from '@ephox/alloy';
+import { Behaviour } from '@ephox/alloy';
+import { Replacing } from '@ephox/alloy';
+import { Sliding } from '@ephox/alloy';
+import { GuiFactory } from '@ephox/alloy';
+import { Container } from '@ephox/alloy';
 import { Fun } from '@ephox/katamari';
-
 import Receivers from '../channels/Receivers';
 import Styles from '../style/Styles';
 

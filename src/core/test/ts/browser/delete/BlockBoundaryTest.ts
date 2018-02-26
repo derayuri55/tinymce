@@ -1,5 +1,10 @@
-import { Assertions, Chain, GeneralSteps, Logger, Pipeline } from '@ephox/agar';
-import { Hierarchy, Element } from '@ephox/sugar';
+import { Assertions } from '@ephox/agar';
+import { Chain } from '@ephox/agar';
+import { GeneralSteps } from '@ephox/agar';
+import { Logger } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
+import { Hierarchy } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
 import BlockBoundary from 'tinymce/core/delete/BlockBoundary';
 import ViewBlock from '../../module/test/ViewBlock';
 import { UnitTest } from '@ephox/bedrock';

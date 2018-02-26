@@ -10,7 +10,10 @@
 
 import { Arr } from '@ephox/katamari';
 import { PlatformDetection } from '@ephox/sand';
-import { Element, Node, Css, Traverse } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Node } from '@ephox/sugar';
+import { Css } from '@ephox/sugar';
+import { Traverse } from '@ephox/sugar';
 
 const browser = PlatformDetection.detect().browser;
 

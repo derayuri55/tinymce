@@ -8,21 +8,19 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Editor } from 'tinymce/core/api/Editor';
-
-const firePastePreProcess = function (editor: Editor, html: string, internal: boolean, isWordHtml: boolean) {
+const firePastePreProcess = function (editor, html, internal, isWordHtml) {
   return editor.fire('PastePreProcess', { content: html, internal, wordContent: isWordHtml });
 };
 
-const firePastePostProcess = function (editor: Editor, node: HTMLElement, internal: boolean, isWordHtml: boolean) {
+const firePastePostProcess = function (editor, node, internal, isWordHtml) {
   return editor.fire('PastePostProcess', { node, internal, wordContent: isWordHtml });
 };
 
-const firePastePlainTextToggle = function (editor: Editor, state: boolean) {
+const firePastePlainTextToggle = function (editor, state) {
   return editor.fire('PastePlainTextToggle', { state });
 };
 
-const firePaste = function (editor: Editor, ieFake: boolean) {
+const firePaste = function (editor, ieFake) {
   return editor.fire('paste', { ieFake });
 };
 

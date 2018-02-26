@@ -15,7 +15,6 @@ import Serializer from 'tinymce/core/api/html/Serializer';
 import Tools from 'tinymce/core/api/util/Tools';
 import Settings from '../api/Settings';
 import Utils from './Utils';
-import { Editor } from 'tinymce/core/api/Editor';
 
 /**
  * This class parses word HTML into proper TinyMCE markup.
@@ -323,7 +322,7 @@ function filterStyles(editor, validStyles, node, styleValue) {
   return null;
 }
 
-const filterWordContent = function (editor: Editor, content: string) {
+const filterWordContent = function (editor, content) {
   let retainStyleProperties, validStyles;
 
   retainStyleProperties = Settings.getRetainStyleProps(editor);
@@ -482,7 +481,7 @@ const filterWordContent = function (editor: Editor, content: string) {
   return content;
 };
 
-const preProcess = function (editor: Editor, content) {
+const preProcess = function (editor, content) {
   return Settings.shouldUseDefaultFilters(editor) ? filterWordContent(editor, content) : content;
 };
 

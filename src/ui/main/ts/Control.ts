@@ -18,7 +18,6 @@ import Collection from './Collection';
 import ObservableObject from './data/ObservableObject';
 import DomUtils from './DomUtils';
 import ReflowQueue from './ReflowQueue';
-import UiContainer from 'tinymce/ui/UiContainer';
 
 /*eslint consistent-this:0 */
 
@@ -157,8 +156,7 @@ const proto = {
    * @return {Element} HTML DOM element to render into.
    */
   getContainerElm () {
-    const uiContainer = UiContainer.getUiContainer(this);
-    return uiContainer ? uiContainer : DomUtils.getContainer();
+    return DomUtils.getContainer();
   },
 
   /**

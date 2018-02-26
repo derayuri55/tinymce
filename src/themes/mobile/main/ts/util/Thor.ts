@@ -1,6 +1,8 @@
 import { Arr } from '@ephox/katamari';
 import { PlatformDetection } from '@ephox/sand';
-import { Attr, Css, SelectorFilter } from '@ephox/sugar';
+import { Attr } from '@ephox/sugar';
+import { Css } from '@ephox/sugar';
+import { SelectorFilter } from '@ephox/sugar';
 
 const attr = 'data-ephox-mobile-fullscreen-style';
 const siblingStyles = 'display:none!important;';

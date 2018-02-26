@@ -1,8 +1,10 @@
 import { Cursors } from '@ephox/agar';
 import { GuiFactory } from '@ephox/alloy';
 import { Fun } from '@ephox/katamari';
-import { Attr, Element, Focus, WindowSelection } from '@ephox/sugar';
-
+import { Focus } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Attr } from '@ephox/sugar';
+import { WindowSelection } from '@ephox/sugar';
 import TestEditor from './TestEditor';
 
 export default function () {

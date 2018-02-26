@@ -10,7 +10,7 @@
 
 import { Arr } from '@ephox/katamari';
 import { Element } from '@ephox/sugar';
-import * as RangeNodes from './RangeNodes';
+import RangeNodes from './RangeNodes';
 
 const getRanges = function (selection) {
   const ranges = [];

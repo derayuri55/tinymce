@@ -1,4 +1,7 @@
-import { Attr, Element, Insert, SelectorFind } from '@ephox/sugar';
+import { Insert } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Attr } from '@ephox/sugar';
+import { SelectorFind } from '@ephox/sugar';
 
 /*
  * The purpose of this fix is to toggle the presence of a meta tag which disables scrolling

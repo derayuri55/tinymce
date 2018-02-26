@@ -1,4 +1,6 @@
-import { RawAssertions, Step, Waiter } from '@ephox/agar';
+import { RawAssertions } from '@ephox/agar';
+import { Step } from '@ephox/agar';
+import { Waiter } from '@ephox/agar';
 import { Cell } from '@ephox/katamari';
 
 const sExecCommand = function (editor, cmd, value?) {
@@ -7,12 +9,12 @@ const sExecCommand = function (editor, cmd, value?) {
   });
 };
 
-const sLoadImage = function (editor, url, size?) {
+const sLoadImage = function (editor, url) {
   return Step.async(function (done) {
     const img = new Image();
 
     img.onload = function () {
-      editor.setContent(`<p><img src="${url}" ${size ? `width="${size.width}" height="${size.height}"` : ''} /></p>`);
+      editor.setContent('<p><img src="' + url + '" /></p>');
       editor.focus();
       done();
     };

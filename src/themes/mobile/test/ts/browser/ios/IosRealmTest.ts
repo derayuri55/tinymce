@@ -1,13 +1,24 @@
-import { Assertions, Pipeline, Step } from '@ephox/agar';
-import { Attachment, GuiFactory, Replacing } from '@ephox/alloy';
-import { UnitTest } from '@ephox/bedrock';
-import { Fun, Merger, Option } from '@ephox/katamari';
+import { Assertions } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
+import { Step } from '@ephox/agar';
+import { Replacing } from '@ephox/alloy';
+import { GuiFactory } from '@ephox/alloy';
+import { Attachment } from '@ephox/alloy';
+import { Fun } from '@ephox/katamari';
+import { Merger } from '@ephox/katamari';
+import { Option } from '@ephox/katamari';
 import { PlatformDetection } from '@ephox/sand';
-import { Attr, Body, Css, DomEvent, Element, Insert, Remove, WindowSelection } from '@ephox/sugar';
-
-import IosRealm from 'tinymce/themes/mobile/ui/IosRealm';
-
+import { Insert } from '@ephox/sugar';
+import { Remove } from '@ephox/sugar';
+import { DomEvent } from '@ephox/sugar';
+import { Body } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Attr } from '@ephox/sugar';
+import { Css } from '@ephox/sugar';
+import { WindowSelection } from '@ephox/sugar';
 import TestUi from '../../module/test/ui/TestUi';
+import IosRealm from 'tinymce/themes/mobile/ui/IosRealm';
+import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('Browser Test: ios.IosRealmTest', function () {
   const success = arguments[arguments.length - 2];
@@ -86,7 +97,7 @@ UnitTest.asynctest('Browser Test: ios.IosRealmTest', function () {
     return Step.stateful(function (value, next, die) {
       const pageBody = iframe.dom().contentWindow.document.body;
       const editorBody = pageBody.querySelector('iframe').contentWindow.document.body;
-      const target: any = Option.from(editorBody.querySelectorAll(selector)[index]).map(Element.fromDom).getOrDie('no index ' + index + ' for selector: ' + selector);
+      const target = Option.from(editorBody.querySelectorAll(selector)[index]).map(Element.fromDom).getOrDie('no index ' + index + ' for selector: ' + selector);
       WindowSelection.setExact(editorBody.ownerDocument.defaultView, target, 0, target, 0);
       const socket = pageBody.querySelector('.tinymce-mobile-editor-socket');
       socket.scrollTop = target.dom().getBoundingClientRect().top - 100 - keyboardHeight;

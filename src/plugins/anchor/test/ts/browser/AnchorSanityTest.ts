@@ -1,5 +1,9 @@
-import { Pipeline, Step, Waiter } from '@ephox/agar';
-import { TinyApis, TinyLoader, TinyUi } from '@ephox/mcagar';
+import { Pipeline } from '@ephox/agar';
+import { Step } from '@ephox/agar';
+import { Waiter } from '@ephox/agar';
+import { TinyApis } from '@ephox/mcagar';
+import { TinyLoader } from '@ephox/mcagar';
+import { TinyUi } from '@ephox/mcagar';
 import AchorPlugin from 'tinymce/plugins/anchor/Plugin';
 import ModernTheme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';

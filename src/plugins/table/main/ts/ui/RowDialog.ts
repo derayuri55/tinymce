@@ -13,7 +13,11 @@ import Tools from 'tinymce/core/api/util/Tools';
 import Styles from '../actions/Styles';
 import Util from '../alien/Util';
 import Helpers from './Helpers';
-import { hasAdvancedRowTab, getRowClassList } from '../api/Settings';
+
+/**
+ * @class tinymce.table.ui.RowDialog
+ * @private
+ */
 
 const extractDataFromElement = function (editor, elm) {
   const dom = editor.dom;
@@ -31,7 +35,7 @@ const extractDataFromElement = function (editor, elm) {
     }
   });
 
-  if (hasAdvancedRowTab(editor)) {
+  if (editor.settings.table_row_advtab !== false) {
     Tools.extend(data, Helpers.extractAdvancedStyles(dom, elm));
   }
 
@@ -144,13 +148,13 @@ const open = function (editor) {
     data = extractDataFromElement(editor, rowElm);
   }
 
-  if (getRowClassList(editor).length > 0) {
+  if (editor.settings.table_row_class_list) {
     classListCtrl = {
       name: 'class',
       type: 'listbox',
       label: 'Class',
       values: Helpers.buildListItems(
-        getRowClassList(editor),
+        editor.settings.table_row_class_list,
         function (item) {
           if (item.value) {
             item.textStyle = function () {
@@ -200,7 +204,7 @@ const open = function (editor) {
     ]
   };
 
-  if (hasAdvancedRowTab(editor)) {
+  if (editor.settings.table_row_advtab !== false) {
     editor.windowManager.open({
       title: 'Row properties',
       data,

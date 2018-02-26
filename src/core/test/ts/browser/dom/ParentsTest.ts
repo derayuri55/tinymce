@@ -1,6 +1,12 @@
-import { Assertions, Chain, GeneralSteps, Logger, Pipeline } from '@ephox/agar';
+import { Assertions } from '@ephox/agar';
+import { Chain } from '@ephox/agar';
+import { GeneralSteps } from '@ephox/agar';
+import { Logger } from '@ephox/agar';
+import { Pipeline } from '@ephox/agar';
 import { Arr } from '@ephox/katamari';
-import { Hierarchy, Element, Node } from '@ephox/sugar';
+import { Hierarchy } from '@ephox/sugar';
+import { Element } from '@ephox/sugar';
+import { Node } from '@ephox/sugar';
 import Parents from 'tinymce/core/dom/Parents';
 import { UnitTest } from '@ephox/bedrock';
 
