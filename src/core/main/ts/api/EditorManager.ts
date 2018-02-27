@@ -8,10 +8,9 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr } from '@ephox/katamari';
-import { Type } from '@ephox/katamari';
+import { Arr, Type } from '@ephox/katamari';
 import AddOnManager from './AddOnManager';
-import Editor from './Editor';
+import { Editor } from './Editor';
 import Env from './Env';
 import ErrorReporter from '../ErrorReporter';
 import DOMUtils from './dom/DOMUtils';
@@ -70,7 +69,7 @@ const toggleGlobalEvents = function (state) {
   }
 };
 
-const removeEditorFromList = function (targetEditor) {
+const removeEditorFromList = function (targetEditor: Editor) {
   const oldEditors = editors;
 
   delete legacyEditors[targetEditor.id];
@@ -437,7 +436,7 @@ EditorManager = {
       let targets;
 
       const createEditor = function (id, settings, targetElm) {
-        const editor = new Editor(id, settings, self);
+        const editor: Editor = new Editor(id, settings, self);
 
         editors.push(editor);
 

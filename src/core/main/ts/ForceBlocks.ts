@@ -8,8 +8,7 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr } from '@ephox/katamari';
-import { Fun } from '@ephox/katamari';
+import { Arr, Fun } from '@ephox/katamari';
 import { Element } from '@ephox/sugar';
 import Bookmarks from './dom/Bookmarks';
 import NodeType from './dom/NodeType';
@@ -41,6 +40,20 @@ const hasBlockParent = function (blockElements, root, node) {
   return Arr.exists(Parents.parents(Element.fromDom(node), Element.fromDom(root)), function (elm) {
     return isBlockElement(blockElements, elm.dom());
   });
+};
+
+// const is
+
+const shouldRemoveTextNode = (blockElements, node) => {
+  if (NodeType.isText(node)) {
+    if (node.nodeValue.length === 0) {
+      return true;
+    } else if (/^\s+$/.test(node.nodeValue) && (!node.nextSibling || isBlockElement(blockElements, node.nextSibling))) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 const addRootBlocks = function (editor) {
@@ -76,8 +89,8 @@ const addRootBlocks = function (editor) {
   node = rootNode.firstChild;
   while (node) {
     if (isValidTarget(blockElements, node)) {
-      // Remove empty text nodes
-      if (NodeType.isText(node) && node.nodeValue.length === 0) {
+      // Remove empty text nodes and nodes containing only whitespace
+      if (shouldRemoveTextNode(blockElements, node)) {
         tempNode = node;
         node = node.nextSibling;
         dom.remove(tempNode);

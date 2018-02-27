@@ -9,10 +9,8 @@
  */
 
 import { Fun } from '@ephox/katamari';
-import { Compare } from '@ephox/sugar';
-import { Element } from '@ephox/sugar';
-import { SelectorExists } from '@ephox/sugar';
-import CaretCandidate from '../caret/CaretCandidate';
+import { Compare, Element, SelectorExists } from '@ephox/sugar';
+import * as CaretCandidate from '../caret/CaretCandidate';
 import NodeType from './NodeType';
 import TreeWalker from '../api/dom/TreeWalker';
 

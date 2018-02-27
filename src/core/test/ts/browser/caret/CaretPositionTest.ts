@@ -149,7 +149,8 @@ UnitTest.asynctest('browser.tinymce.core.CaretPositionTest', function () {
 
   suite.test('getClientRects at extending character', function () {
     setupHtml('a');
-    getRoot().firstChild.appendData('\u0301b');
+    const textNode = getRoot().firstChild as Text;
+    textNode.appendData('\u0301b');
 
     LegacyUnit.equal(CaretPosition(getRoot().firstChild, 0).getClientRects().length, 1);
     LegacyUnit.equal(CaretPosition(getRoot().firstChild, 1).getClientRects().length, 0);
@@ -165,6 +166,14 @@ UnitTest.asynctest('browser.tinymce.core.CaretPositionTest', function () {
     LegacyUnit.equal(CaretPosition(getRoot().firstChild, 3).getClientRects().length, 1);
     LegacyUnit.equal(CaretPosition(getRoot().firstChild, 4).getClientRects().length, 0);
     LegacyUnit.equal(CaretPosition(getRoot().firstChild, 5).getClientRects().length, 0);
+  });
+
+  suite.test('getClientRects at only one text node should return client rects', function () {
+    setupHtml('<p>a<br>b</p>');
+    LegacyUnit.equal(CaretPosition(getRoot().firstChild.firstChild, 0).getClientRects().length > 0, true);
+    LegacyUnit.equal(CaretPosition(getRoot().firstChild.firstChild, 1).getClientRects().length > 0, true);
+    LegacyUnit.equal(CaretPosition(getRoot().firstChild.lastChild, 0).getClientRects().length > 0, true);
+    LegacyUnit.equal(CaretPosition(getRoot().firstChild.lastChild, 1).getClientRects().length > 0, true);
   });
 
   suite.test('getNode', function () {

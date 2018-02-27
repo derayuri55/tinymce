@@ -1,9 +1,9 @@
 import { Pipeline } from '@ephox/agar';
-import { LegacyUnit } from '@ephox/mcagar';
-import { Hierarchy } from '@ephox/sugar';
-import { Element } from '@ephox/sugar';
-import FontInfo from 'tinymce/ui/fmt/FontInfo';
 import { UnitTest } from '@ephox/bedrock';
+import { LegacyUnit } from '@ephox/mcagar';
+import { Element, Hierarchy } from '@ephox/sugar';
+
+import FontInfo from 'tinymce/ui/fmt/FontInfo';
 
 UnitTest.asynctest('browser.tinymce.ui.fmt.FontInfoTest', function () {
   const success = arguments[arguments.length - 2];
@@ -71,6 +71,7 @@ UnitTest.asynctest('browser.tinymce.ui.fmt.FontInfoTest', function () {
     assertComputedFontProp('fontFamily', '<mark></mark>', [0], 'Arial,Verdana');
     assertComputedFontProp('fontFamily', '<span><mark></mark></span>', [0, 0], 'Arial,Helvetica,Verdana');
     assertSpecificFontProp('fontFamily', '<mark style="font-family: Arial, Verdana"></mark>', [0], 'Arial,Verdana');
+    assertSpecificFontProp('fontFamily', '<mark style="font-family: Comic Sans MS"></mark>', [0], 'Comic Sans MS');
     assertSpecificFontProp('fontFamily', '<mark style="font-family: Arial, Helvetica, Verdana"></mark>', [0], 'Arial,Helvetica,Verdana');
     assertSpecificFontProp('fontFamily', '<span style="font-family: Arial, Verdana"><mark></mark></span>', [0, 0], 'Arial,Verdana');
     assertSpecificFontProp(
