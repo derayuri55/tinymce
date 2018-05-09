@@ -11,11 +11,9 @@
 import Env from '../Env';
 import Delay from '../util/Delay';
 
-export type EditorEvent<T> = T & {
-  isDefaultPrevented: () => boolean;
-  isPropagationStopped: () => boolean;
-  isImmediatePropagationStopped: () => boolean;
-};
+/*jshint loopfunc:true*/
+
+/*eslint no-loop-func:0 */
 
 /**
  * This class wraps the browsers native event logic with more convenient methods.

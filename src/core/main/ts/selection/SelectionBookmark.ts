@@ -72,15 +72,10 @@ const validate = function (root, bookmark) {
 
 const bookmarkToNativeRng = function (bookmark) {
   const rng = document.createRange();
+  rng.setStart(bookmark.start().dom(), bookmark.soffset());
+  rng.setEnd(bookmark.finish().dom(), bookmark.foffset());
 
-  try {
-    // Might throw IndexSizeError
-    rng.setStart(bookmark.start().dom(), bookmark.soffset());
-    rng.setEnd(bookmark.finish().dom(), bookmark.foffset());
-    return Option.some(rng);
-  } catch (_) {
-    return Option.none();
-  }
+  return Option.some(rng);
 };
 
 const store = function (editor) {

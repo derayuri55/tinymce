@@ -16,6 +16,7 @@ import SelectionOverrides from '../SelectionOverrides';
 import UndoManager from '../api/UndoManager';
 import Formatter from '../api/Formatter';
 import Serializer from '../api/dom/Serializer';
+import CaretContainerInput from '../caret/CaretContainerInput';
 import DOMUtils from '../api/dom/DOMUtils';
 import { Selection } from '../api/dom/Selection';
 import DomParser from '../api/html/DomParser';
@@ -25,15 +26,12 @@ import KeyboardOverrides from '../keyboard/KeyboardOverrides';
 import Delay from '../api/util/Delay';
 import Quirks from '../util/Quirks';
 import Tools from '../api/util/Tools';
-import { Editor } from 'tinymce/core/api/Editor';
-import TripleClickSelection from 'tinymce/core/selection/TripleClickSelection';
-import * as DetailsElement from '../selection/DetailsElement';
 
 declare const escape: any;
 
 const DOM = DOMUtils.DOM;
 
-const appendStyle = function (editor: Editor, text: string) {
+const appendStyle = function (editor, text) {
   const head = Element.fromDom(editor.getDoc().head);
   const tag = Element.fromTag('style');
   Attr.set(tag, 'type', 'text/css');
@@ -41,7 +39,7 @@ const appendStyle = function (editor: Editor, text: string) {
   Insert.append(head, tag);
 };
 
-const createParser = function (editor: Editor) {
+const createParser = function (editor) {
   const parser = DomParser(editor.settings, editor.schema);
 
   // Convert src and href into data-mce-src, data-mce-href and data-mce-style
@@ -82,7 +80,7 @@ const createParser = function (editor: Editor) {
   });
 
   // Keep scripts from executing
-  parser.addNodeFilter('script', function (nodes: Node[]) {
+  parser.addNodeFilter('script', function (nodes) {
     let i = nodes.length, node, type;
 
     while (i--) {
@@ -94,7 +92,7 @@ const createParser = function (editor: Editor) {
     }
   });
 
-  parser.addNodeFilter('#cdata', function (nodes: Node[]) {
+  parser.addNodeFilter('#cdata', function (nodes) {
     let i = nodes.length, node;
 
     while (i--) {
@@ -105,7 +103,7 @@ const createParser = function (editor: Editor) {
     }
   });
 
-  parser.addNodeFilter('p,h1,h2,h3,h4,h5,h6,div', function (nodes: Node[]) {
+  parser.addNodeFilter('p,h1,h2,h3,h4,h5,h6,div', function (nodes) {
     let i = nodes.length, node;
     const nonEmptyElements = editor.schema.getNonEmptyElements();
 
@@ -121,7 +119,7 @@ const createParser = function (editor: Editor) {
   return parser;
 };
 
-const autoFocus = function (editor: Editor) {
+const autoFocus = function (editor) {
   if (editor.settings.auto_focus) {
     Delay.setEditorTimeout(editor, function () {
       let focusEditor;
@@ -139,7 +137,7 @@ const autoFocus = function (editor: Editor) {
   }
 };
 
-const initEditor = function (editor: Editor) {
+const initEditor = function (editor) {
   editor.bindPendingEventDelegates();
   editor.initialized = true;
   editor.fire('init');
@@ -149,11 +147,11 @@ const initEditor = function (editor: Editor) {
   autoFocus(editor);
 };
 
-const getStyleSheetLoader = function (editor: Editor) {
+const getStyleSheetLoader = function (editor) {
   return editor.inline ? DOM.styleSheetLoader : editor.dom.styleSheetLoader;
 };
 
-const initContentBody = function (editor: Editor, skipWrite?: boolean) {
+const initContentBody = function (editor, skipWrite?) {
   const settings = editor.settings;
   const targetElm = editor.getElement();
   let doc = editor.getDoc(), body, contentCssText;
@@ -208,7 +206,7 @@ const initContentBody = function (editor: Editor, skipWrite?: boolean) {
 
   editor.editorUpload = EditorUpload(editor);
   editor.schema = Schema(settings);
-  editor.dom = DOMUtils(doc, {
+  editor.dom = new DOMUtils(doc, {
     keep_values: true,
     url_converter: editor.convertURL,
     url_converter_scope: editor,
@@ -231,8 +229,7 @@ const initContentBody = function (editor: Editor, skipWrite?: boolean) {
   editor._nodeChangeDispatcher = new NodeChange(editor);
   editor._selectionOverrides = SelectionOverrides(editor);
 
-  DetailsElement.setup(editor);
-  TripleClickSelection.setup(editor);
+  CaretContainerInput.setup(editor);
   KeyboardOverrides.setup(editor);
   ForceBlocks.setup(editor);
 
@@ -268,8 +265,15 @@ const initContentBody = function (editor: Editor, skipWrite?: boolean) {
     editor.addVisual(editor.getBody());
   });
 
+  // Remove empty contents
+  if (settings.padd_empty_editor) {
+    editor.on('PostProcess', function (e) {
+      e.content = e.content.replace(/^(<p[^>]*>(&nbsp;|&#160;|\s|\u00a0|<br \/>|)<\/p>[\r\n]*|<br \/>[\r\n]*)$/, '');
+    });
+  }
+
   editor.load({ initial: true, format: 'html' });
-  editor.startContent = editor.getContent({ format: 'raw' }) as string;
+  editor.startContent = editor.getContent({ format: 'raw' });
 
   editor.on('compositionstart compositionend', function (e) {
     editor.composing = e.type === 'compositionstart';

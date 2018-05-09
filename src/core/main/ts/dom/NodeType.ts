@@ -44,8 +44,7 @@ const matchStyleValues = function (name: string, values: string) {
 
     if (isElement(node)) {
       for (i = 0; i < items.length; i++) {
-        const computed = node.ownerDocument.defaultView.getComputedStyle(node, null);
-        cssValue = computed ? computed.getPropertyValue(name) : null;
+        cssValue = node.ownerDocument.defaultView.getComputedStyle(node, null).getPropertyValue(name);
         if (cssValue === items[i]) {
           return true;
         }
@@ -98,8 +97,8 @@ const isText = isNodeType(3) as (node: Node) => node is Text;
 const isComment = isNodeType(8) as (node: Node) => node is Comment;
 const isDocument = isNodeType(9) as (node: Node) => node is Document;
 const isBr = matchNodeNames('br') as (node: Node) => node is Element;
-const isContentEditableTrue = hasContentEditableState('true') as (node: Node) => node is HTMLElement;
-const isContentEditableFalse = hasContentEditableState('false') as (node: Node) => node is HTMLElement;
+const isContentEditableTrue = hasContentEditableState('true') as (node: Node) => node is Element;
+const isContentEditableFalse = hasContentEditableState('false') as (node: Node) => node is Element;
 
 export default {
   isText,

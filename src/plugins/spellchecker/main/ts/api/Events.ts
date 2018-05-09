@@ -8,13 +8,11 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Editor } from 'tinymce/core/api/Editor';
-
-const fireSpellcheckStart = function (editor: Editor) {
+const fireSpellcheckStart = function (editor) {
   return editor.fire('SpellcheckStart');
 };
 
-const fireSpellcheckEnd = function (editor: Editor) {
+const fireSpellcheckEnd = function (editor) {
   return editor.fire('SpellcheckEnd');
 };
 

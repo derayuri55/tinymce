@@ -23,7 +23,7 @@ const selection = function (cell, selections) {
   );
 };
 
-const unmergable = function (cell, selections): Option<any> {
+const unmergable = function (cell, selections) {
   const hasSpan = function (elem) {
     return (Attr.has(elem, 'rowspan') && parseInt(Attr.get(elem, 'rowspan'), 10) > 1) ||
            (Attr.has(elem, 'colspan') && parseInt(Attr.get(elem, 'colspan'), 10) > 1);
@@ -34,7 +34,7 @@ const unmergable = function (cell, selections): Option<any> {
   return candidates.length > 0 && Arr.forall(candidates, hasSpan) ? Option.some(candidates) : Option.none();
 };
 
-const mergable = function (table, selections): Option<any> {
+const mergable = function (table, selections) {
   return SelectionTypes.cata(selections.get(),
     Option.none,
     function (cells, _env) {

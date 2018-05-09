@@ -22,7 +22,7 @@ const clearDomReferences = (editor: Editor) => {
 };
 
 const restoreForm = (editor: Editor) => {
-  const form = editor.formElement as any;
+  const form = editor.formElement;
   if (form) {
     if (form._mceOldSubmit) {
       form.submit = form._mceOldSubmit;
@@ -41,7 +41,7 @@ const remove =  (editor: Editor): void => {
     if (body) {
       editor.save();
     }
-    editor.removed = true;
+    editor.removed = 1;
     editor.unbindAllNativeEvents();
 
     // Remove any hidden input
@@ -94,7 +94,7 @@ const destroy = (editor: Editor, automatic?: boolean): void => {
   restoreForm(editor);
   clearDomReferences(editor);
 
-  editor.destroyed = true;
+  editor.destroyed = 1;
 };
 
 export {

@@ -3,7 +3,10 @@ import { Element } from '@ephox/sugar';
 import * as ElementType from 'tinymce/core/dom/ElementType';
 import { UnitTest } from '@ephox/bedrock';
 
-UnitTest.asynctest('browser.tinymce.core.dom.ElementTypeTest', (success, failure) => {
+UnitTest.asynctest('browser.tinymce.core.dom.ElementTypeTest', function () {
+  const success = arguments[arguments.length - 2];
+  const failure = arguments[arguments.length - 1];
+
   const sCheckElement = function (name, predicate, expectedValue) {
     return Step.sync(function () {
       Assertions.assertEq('Should be the expected value for specified element', expectedValue, predicate(Element.fromTag(name)));
@@ -87,13 +90,6 @@ UnitTest.asynctest('browser.tinymce.core.dom.ElementTypeTest', (success, failure
       sCheckElement('tbody', ElementType.isTableSection, true),
       sCheckElement('tfoot', ElementType.isTableSection, true),
       sCheckText(ElementType.isTableSection)
-    ])),
-    Logger.t('Check whitespace preserve elements', GeneralSteps.sequence([
-      sCheckElement('br', ElementType.isWsPreserveElement, false),
-      sCheckElement('div', ElementType.isWsPreserveElement, false),
-      sCheckElement('pre', ElementType.isWsPreserveElement, true),
-      sCheckElement('textarea', ElementType.isWsPreserveElement, true),
-      sCheckText(ElementType.isWsPreserveElement)
     ]))
   ], function () {
     success();

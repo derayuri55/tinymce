@@ -8,9 +8,9 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import Bookmarks from '../bookmark/Bookmarks';
+import Bookmarks from '../dom/Bookmarks';
 import NodeType from '../dom/NodeType';
-import * as CaretFormat from './CaretFormat';
+import CaretFormat from './CaretFormat';
 import ExpandRange from './ExpandRange';
 import FormatUtils from './FormatUtils';
 import Hooks from './Hooks';
@@ -20,14 +20,11 @@ import RangeNormalizer from '../selection/RangeNormalizer';
 import RangeWalk from '../selection/RangeWalk';
 import Tools from '../api/util/Tools';
 import { Selection } from '../api/dom/Selection';
-import { isCaretNode } from 'tinymce/core/fmt/FormatContainer';
-import GetBookmark from 'tinymce/core/bookmark/GetBookmark';
-import { Editor } from 'tinymce/core/api/Editor';
 
 const each = Tools.each;
 
 const isElementNode = function (node: Node) {
-  return node && node.nodeType === 1 && !Bookmarks.isBookmarkNode(node) && !isCaretNode(node) && !NodeType.isBogus(node);
+  return node && node.nodeType === 1 && !Bookmarks.isBookmarkNode(node) && !CaretFormat.isCaretNode(node) && !NodeType.isBogus(node);
 };
 
 const processChildElements = function (node, filter, process) {
@@ -43,7 +40,7 @@ const processChildElements = function (node, filter, process) {
   });
 };
 
-const applyFormat = function (ed: Editor, name: string, vars?, node?) {
+const applyFormat = function (ed, name, vars?, node?) {
   const formatList = ed.formatter.get(name);
   const format = formatList[0];
   let bookmark, rng;
@@ -100,7 +97,7 @@ const applyFormat = function (ed: Editor, name: string, vars?, node?) {
         return;
       }
 
-      if (dom.is(node, format.selector) && !isCaretNode(node)) {
+      if (dom.is(node, format.selector) && !CaretFormat.isCaretNode(node)) {
         setElementFormat(node, format);
         found = true;
         return false;
@@ -185,7 +182,7 @@ const applyFormat = function (ed: Editor, name: string, vars?, node?) {
           !(!nodeSpecific && node.nodeType === 3 &&
             node.nodeValue.length === 1 &&
             node.nodeValue.charCodeAt(0) === 65279) &&
-          !isCaretNode(node) &&
+          !CaretFormat.isCaretNode(node) &&
           (!format.inline || !dom.isBlock(node))) {
           // Start wrapping
           if (!currentWrapElm) {
@@ -337,7 +334,7 @@ const applyFormat = function (ed: Editor, name: string, vars?, node?) {
 
         // Apply formatting to selection
         ed.selection.setRng(RangeNormalizer.normalize(ed.selection.getRng()));
-        bookmark = GetBookmark.getPersistentBookmark(ed.selection, true);
+        bookmark = selection.getBookmark();
         applyRngStyle(dom, ExpandRange.expandRng(ed, selection.getRng(), formatList), bookmark);
 
         if (format.styles) {

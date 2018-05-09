@@ -11,33 +11,21 @@
 import { Fun } from '@ephox/katamari';
 import Tools from 'tinymce/core/api/util/Tools';
 import Styles from '../actions/Styles';
-import * as Util from '../alien/Util';
+import Util from '../alien/Util';
 import Helpers from './Helpers';
 import { hasAdvancedRowTab, getRowClassList } from '../api/Settings';
-import { Editor } from 'tinymce/core/api/Editor';
-import DOMUtils from 'tinymce/core/api/dom/DOMUtils';
 
-interface FormData {
-  height: string;
-  scope: string;
-  class: string;
-  align: string;
-  style: string;
-  type: string;
-}
-
-const extractDataFromElement = function (editor: Editor, elm: Node): FormData {
+const extractDataFromElement = function (editor, elm) {
   const dom = editor.dom;
-  const data: FormData = {
+  const data: any = {
     height: dom.getStyle(elm, 'height') || dom.getAttrib(elm, 'height'),
     scope: dom.getAttrib(elm, 'scope'),
-    class: dom.getAttrib(elm, 'class'),
-    align: '',
-    style: '',
-    type: elm.parentNode.nodeName.toLowerCase()
+    class: dom.getAttrib(elm, 'class')
   };
 
-  Tools.each('left center right'.split(' '), function (name: string) {
+  data.type = elm.parentNode.nodeName.toLowerCase();
+
+  Tools.each('left center right'.split(' '), function (name) {
     if (editor.formatter.matchNode(elm, 'align' + name)) {
       data.align = name;
     }
@@ -50,10 +38,10 @@ const extractDataFromElement = function (editor: Editor, elm: Node): FormData {
   return data;
 };
 
-const switchRowType = function (dom: DOMUtils, rowElm: HTMLElement, toType) {
+const switchRowType = function (dom, rowElm, toType) {
   const tableElm = dom.getParent(rowElm, 'table');
   const oldParentElm = rowElm.parentNode;
-  let parentElm = dom.select(toType, tableElm as Element)[0];
+  let parentElm = dom.select(toType, tableElm)[0];
 
   if (!parentElm) {
     parentElm = dom.create(toType);
@@ -76,26 +64,27 @@ const switchRowType = function (dom: DOMUtils, rowElm: HTMLElement, toType) {
   }
 };
 
-function onSubmitRowForm(editor: Editor, rows: HTMLElement[], oldData: FormData, evt) {
+function onSubmitRowForm(editor, rows, evt) {
   const dom = editor.dom;
+  let data;
 
-  function setAttrib(elm: Node, name: string, value: string) {
+  function setAttrib(elm, name, value) {
     if (value) {
       dom.setAttrib(elm, name, value);
     }
   }
 
-  function setStyle(elm: Node, name: string, value: string) {
+  function setStyle(elm, name, value) {
     if (value) {
       dom.setStyle(elm, name, value);
     }
   }
 
   Helpers.updateStyleField(editor, evt);
-  const data: FormData = evt.control.rootControl.toJSON();
+  data = evt.control.rootControl.toJSON();
 
   editor.undoManager.transact(function () {
-    Tools.each(rows, function (rowElm: HTMLElement) {
+    Tools.each(rows, function (rowElm) {
       setAttrib(rowElm, 'scope', data.scope);
       setAttrib(rowElm, 'style', data.style);
       setAttrib(rowElm, 'class', data.class);
@@ -105,8 +94,12 @@ function onSubmitRowForm(editor: Editor, rows: HTMLElement[], oldData: FormData,
         switchRowType(editor.dom, rowElm, data.type);
       }
 
-      if (data.align !== oldData.align) {
+      // Apply/remove alignment
+      if (rows.length === 1) {
         Styles.unApplyAlign(editor, rowElm);
+      }
+
+      if (data.align) {
         Styles.applyAlign(editor, rowElm, data.align);
       }
     });
@@ -115,9 +108,9 @@ function onSubmitRowForm(editor: Editor, rows: HTMLElement[], oldData: FormData,
   });
 }
 
-const open = function (editor: Editor) {
+const open = function (editor) {
   const dom = editor.dom;
-  let tableElm, cellElm, rowElm, classListCtrl, data: FormData;
+  let tableElm, cellElm, rowElm, classListCtrl, data;
   const rows = [];
   let generalRowForm;
 
@@ -143,7 +136,6 @@ const open = function (editor: Editor) {
     data = {
       height: '',
       scope: '',
-      style: '',
       class: '',
       align: '',
       type: rowElm.parentNode.nodeName.toLowerCase()
@@ -221,14 +213,14 @@ const open = function (editor: Editor) {
         },
         Helpers.createStyleForm(editor)
       ],
-      onsubmit: Fun.curry(onSubmitRowForm, editor, rows, data)
+      onsubmit: Fun.curry(onSubmitRowForm, editor, rows)
     });
   } else {
     editor.windowManager.open({
       title: 'Row properties',
       data,
       body: generalRowForm,
-      onsubmit: Fun.curry(onSubmitRowForm, editor, rows, data)
+      onsubmit: Fun.curry(onSubmitRowForm, editor, rows)
     });
   }
 };

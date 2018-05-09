@@ -4,7 +4,9 @@ import JSON from 'tinymce/core/api/util/JSON';
 import Theme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';
 
-UnitTest.asynctest('browser.tinymce.core.content.InsertContentCommandTest', (success, failure) => {
+UnitTest.asynctest('browser.tinymce.core.InsertContentCommandTest', function () {
+  const success = arguments[arguments.length - 2];
+  const failure = arguments[arguments.length - 1];
   const suite = LegacyUnit.createSuite();
 
   Theme();

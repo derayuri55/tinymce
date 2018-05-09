@@ -11,8 +11,7 @@
 import { ResizeWire } from '@ephox/snooker';
 import { Body, Css, Element, Insert, Remove } from '@ephox/sugar';
 
-import * as Util from '../alien/Util';
-import { Editor } from 'tinymce/core/api/Editor';
+import Util from '../alien/Util';
 
 const createContainer = function () {
   const container = Element.fromTag('div');
@@ -31,11 +30,11 @@ const createContainer = function () {
   return container;
 };
 
-const get = function (editor: Editor, container?) {
+const get = function (editor, container?) {
   return editor.inline ? ResizeWire.body(Util.getBody(editor), createContainer()) : ResizeWire.only(Element.fromDom(editor.getDoc()));
 };
 
-const remove = function (editor: Editor, wire) {
+const remove = function (editor, wire) {
   if (editor.inline) {
     Remove.remove(wire.parent());
   }

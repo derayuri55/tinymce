@@ -1,5 +1,4 @@
 import { Fun, Arr } from '@ephox/katamari';
-import NodeType from 'tinymce/core/dom/NodeType';
 
 const charCodeToKeyCode = function (charCode) {
   const lookup = {
@@ -10,19 +9,6 @@ const charCodeToKeyCode = function (charCode) {
   };
 
   return lookup[String.fromCharCode(charCode)];
-};
-
-const needsNbsp = (rng: Range, chr: string) => {
-  const container = rng.startContainer;
-  const offset = rng.startOffset;
-
-  if (chr === ' ' && NodeType.isText(container)) {
-    if (container.data[offset - 1] === ' ' || offset === container.data.length) {
-      return true;
-    }
-  }
-
-  return false;
 };
 
 const type = function (editor, chr) {
@@ -109,7 +95,7 @@ const type = function (editor, chr) {
       rng = editor.selection.getRng(true);
 
       if (rng.startContainer.nodeType === 3 && rng.collapsed) {
-        rng.startContainer.insertData(rng.startOffset, needsNbsp(rng, chr) ? '\u00a0' : chr);
+        rng.startContainer.insertData(rng.startOffset, chr);
         rng.setStart(rng.startContainer, rng.startOffset + 1);
         rng.collapse(true);
         editor.selection.setRng(rng);

@@ -8,13 +8,14 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
+import { Fun } from '@ephox/katamari';
 import Tools from 'tinymce/core/api/util/Tools';
+import TableDialog from './TableDialog';
 import { getToolbar } from '../api/Settings';
-import { Editor } from 'tinymce/core/api/Editor';
 
 const each = Tools.each;
 
-const addButtons = function (editor: Editor) {
+const addButtons = function (editor) {
   const menuItems = [];
   each('inserttable tableprops deletetable | cell row column'.split(' '), function (name) {
     if (name === '|') {
@@ -30,7 +31,7 @@ const addButtons = function (editor: Editor) {
     menu: menuItems
   });
 
-  function cmd(command: string) {
+  function cmd(command) {
     return function () {
       editor.execCommand(command);
     };
@@ -38,7 +39,7 @@ const addButtons = function (editor: Editor) {
 
   editor.addButton('tableprops', {
     title: 'Table properties',
-    onclick: cmd('mceTableProps'),
+    onclick: Fun.curry(TableDialog.open, editor, true),
     icon: 'table'
   });
 
@@ -118,8 +119,8 @@ const addButtons = function (editor: Editor) {
   });
 };
 
-const addToolbars = function (editor: Editor) {
-  const isTable = function (table: Node) {
+const addToolbars = function (editor) {
+  const isTable = function (table) {
     const selectorMatched = editor.dom.is(table, 'table') && editor.getBody().contains(table);
 
     return selectorMatched;

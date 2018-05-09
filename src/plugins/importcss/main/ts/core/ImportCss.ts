@@ -13,9 +13,8 @@ import EditorManager from 'tinymce/core/api/EditorManager';
 import Env from 'tinymce/core/api/Env';
 import Tools from 'tinymce/core/api/util/Tools';
 import Settings from '../api/Settings';
-import { Editor } from 'tinymce/core/api/Editor';
 
-const removeCacheSuffix = function (url: string) {
+const removeCacheSuffix = function (url) {
   const cacheSuffix = Env.cacheSuffix;
 
   if (typeof url === 'string') {
@@ -25,7 +24,7 @@ const removeCacheSuffix = function (url: string) {
   return url;
 };
 
-const isSkinContentCss = function (editor: Editor, href: string) {
+const isSkinContentCss = function (editor, href) {
   const settings = editor.settings, skin = settings.skin !== false ? settings.skin || 'lightgray' : false;
 
   if (skin) {
@@ -36,7 +35,7 @@ const isSkinContentCss = function (editor: Editor, href: string) {
   return false;
 };
 
-const compileFilter = function (filter: string | RegExp | Function) {
+const compileFilter = function (filter) {
   if (typeof filter === 'string') {
     return function (value) {
       return value.indexOf(filter) !== -1;
@@ -89,13 +88,13 @@ const getSelectors = function (editor, doc, fileFilter) {
   });
 
   if (!fileFilter) {
-    fileFilter = function (href: string, imported: string) {
+    fileFilter = function (href, imported) {
       return imported || contentCSSUrls[href];
     };
   }
 
   try {
-    Tools.each(doc.styleSheets, function (styleSheet: string) {
+    Tools.each(doc.styleSheets, function (styleSheet) {
       append(styleSheet);
     });
   } catch (e) {
@@ -105,7 +104,7 @@ const getSelectors = function (editor, doc, fileFilter) {
   return selectors;
 };
 
-const defaultConvertSelectorToFormat = function (editor: Editor, selectorText: string) {
+const defaultConvertSelectorToFormat = function (editor, selectorText) {
   let format;
 
   // Parse simple element.class1, .class1
@@ -153,7 +152,7 @@ const defaultConvertSelectorToFormat = function (editor: Editor, selectorText: s
   return format;
 };
 
-const getGroupsBySelector = function (groups, selector: string) {
+const getGroupsBySelector = function (groups, selector) {
   return Tools.grep(groups, function (group) {
     return !group.filter || group.filter(selector);
   });
@@ -173,22 +172,16 @@ const compileUserDefinedGroups = function (groups) {
   });
 };
 
-interface StyleGroup {
-  title: string;
-  selectors: Record<string, any>;
-  filter: string | RegExp | Function;
-}
-
-const isExclusiveMode = function (editor: Editor, group: StyleGroup) {
+const isExclusiveMode = function (editor, group) {
   // Exclusive mode can only be disabled when there are groups allowing the same style to be present in multiple groups
   return group === null || Settings.shouldImportExclusive(editor) !== false;
 };
 
-const isUniqueSelector = function (editor: Editor, selector: string, group: StyleGroup, globallyUniqueSelectors: Record<string, any>) {
+const isUniqueSelector = function (editor, selector, group, globallyUniqueSelectors) {
   return !(isExclusiveMode(editor, group) ? selector in globallyUniqueSelectors : selector in group.selectors);
 };
 
-const markUniqueSelector = function (editor: Editor, selector: string, group: StyleGroup, globallyUniqueSelectors: Record<string, any>) {
+const markUniqueSelector = function (editor, selector, group, globallyUniqueSelectors) {
   if (isExclusiveMode(editor, group)) {
     globallyUniqueSelectors[selector] = true;
   } else {
@@ -212,13 +205,13 @@ const convertSelectorToFormat = function (editor, plugin, selector, group) {
   return selectorConverter.call(plugin, selector, group);
 };
 
-const setup = function (editor: Editor) {
+const setup = function (editor) {
   editor.on('renderFormatsMenu', function (e) {
     const globallyUniqueSelectors = {};
     const selectorFilter = compileFilter(Settings.getSelectorFilter(editor)), ctrl = e.control;
     const groups = compileUserDefinedGroups(Settings.getCssGroups(editor));
 
-    const processSelector = function (selector: string, group: StyleGroup) {
+    const processSelector = function (selector, group) {
       if (isUniqueSelector(editor, selector, group, globallyUniqueSelectors)) {
         markUniqueSelector(editor, selector, group, globallyUniqueSelectors);
 
@@ -241,7 +234,7 @@ const setup = function (editor: Editor) {
       ctrl.items().remove();
     }
 
-    Tools.each(getSelectors(editor, e.doc || editor.getDoc(), compileFilter(Settings.getFileFilter(editor))), function (selector: string) {
+    Tools.each(getSelectors(editor, e.doc || editor.getDoc(), compileFilter(Settings.getFileFilter(editor))), function (selector) {
       if (selector.indexOf('.mce-') === -1) {
         if (!selectorFilter || selectorFilter(selector)) {
           const selectorGroups = getGroupsBySelector(groups, selector);

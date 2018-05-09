@@ -2,22 +2,20 @@
  * Mode.js
  *
  * Released under LGPL License.
- * Copyright (c) 1999-2018 Ephox Corp. All rights reserved
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Editor } from 'tinymce/core/api/Editor';
-import { Element, Class } from '@ephox/sugar';
-import Events from 'tinymce/core/api/Events';
+/**
+ * Mode switcher logic.
+ *
+ * @private
+ * @class tinymce.Mode
+ */
 
-const enum EditorMode {
-  Design = 'design',
-  ReadOnly = 'readonly'
-}
-
-const setEditorCommandState = (editor: Editor, cmd: string, state: boolean) => {
+const setEditorCommandState = function (editor, cmd, state) {
   try {
     editor.getDoc().execCommand(cmd, false, state);
   } catch (ex) {
@@ -25,24 +23,40 @@ const setEditorCommandState = (editor: Editor, cmd: string, state: boolean) => {
   }
 };
 
-const toggleClass = (elm, cls, state: boolean) => {
-  if (Class.has(elm, cls) && state === false) {
-    Class.remove(elm, cls);
-  } else if (state) {
-    Class.add(elm, cls);
-  }
+const clickBlocker = function (editor) {
+  let target, handler;
+
+  target = editor.getBody();
+
+  handler = function (e) {
+    if (editor.dom.getParents(e.target, 'a').length > 0) {
+      e.preventDefault();
+    }
+  };
+
+  editor.dom.bind(target, 'click', handler);
+
+  return {
+    unbind () {
+      editor.dom.unbind(target, 'click', handler);
+    }
+  };
 };
 
-const toggleReadOnly = (editor: Editor, state: boolean) => {
-  toggleClass(Element.fromDom(editor.getBody()), 'mce-content-readonly', state);
+const toggleReadOnly = function (editor, state) {
+  if (editor._clickBlocker) {
+    editor._clickBlocker.unbind();
+    editor._clickBlocker = null;
+  }
 
   if (state) {
+    editor._clickBlocker = clickBlocker(editor);
     editor.selection.controlSelection.hideResizeRect();
     editor.readonly = true;
-    editor.getBody().contentEditable = 'false';
+    editor.getBody().contentEditable = false;
   } else {
     editor.readonly = false;
-    editor.getBody().contentEditable = 'true';
+    editor.getBody().contentEditable = true;
     setEditorCommandState(editor, 'StyleWithCSS', false);
     setEditorCommandState(editor, 'enableInlineTableEditing', false);
     setEditorCommandState(editor, 'enableObjectResizing', false);
@@ -51,29 +65,25 @@ const toggleReadOnly = (editor: Editor, state: boolean) => {
   }
 };
 
-const setMode = (editor: Editor, mode: EditorMode) => {
-  if (mode === getMode(editor)) {
+const setMode = function (editor, mode) {
+  const currentMode = editor.readonly ? 'readonly' : 'design';
+
+  if (mode === currentMode) {
     return;
   }
 
   if (editor.initialized) {
-    toggleReadOnly(editor, mode === EditorMode.ReadOnly);
+    toggleReadOnly(editor, mode === 'readonly');
   } else {
     editor.on('init', function () {
-      toggleReadOnly(editor, mode === EditorMode.ReadOnly);
+      toggleReadOnly(editor, mode === 'readonly');
     });
   }
 
-  Events.fireSwitchMode(editor, mode);
+  // Event is NOT preventable
+  editor.fire('SwitchMode', { mode });
 };
 
-const getMode = (editor: Editor) => editor.readonly ? EditorMode.ReadOnly : EditorMode.Design;
-
-const isReadOnly = (editor: Editor) => editor.readonly === true;
-
-export {
-  EditorMode,
-  setMode,
-  getMode,
-  isReadOnly
+export default {
+  setMode
 };

@@ -15,26 +15,19 @@ import NormalizeLists from '../core/NormalizeLists';
 import Selection from '../core/Selection';
 import SplitList from '../core/SplitList';
 import TextBlock from '../core/TextBlock';
-import { Editor } from 'tinymce/core/api/Editor';
 
 const DOM = DOMUtils.DOM;
 
-const removeEmptyLi = function (dom: DOMUtils, li: HTMLLIElement) {
+const removeEmptyLi = function (dom, li) {
   if (NodeType.isEmpty(dom, li)) {
     DOM.remove(li);
   }
 };
 
-const outdent = function (editor: Editor, li: HTMLLIElement) {
+const outdent = function (editor, li) {
   let ul = li.parentNode;
-  let ulParent, newBlock;
-
-  if (ul) {
-    ulParent = ul.parentNode;
-  } else {
-    removeEmptyLi(editor.dom, li);
-    return true;
-  }
+  const ulParent = ul.parentNode;
+  let newBlock;
 
   if (ul === editor.getBody()) {
     return true;
@@ -99,11 +92,11 @@ const outdent = function (editor: Editor, li: HTMLLIElement) {
   return true;
 };
 
-const outdentSelection = function (editor: Editor) {
+const outdentSelection = function (editor) {
   const listElements = Selection.getSelectedListItems(editor);
 
   if (listElements.length) {
-    const bookmark = Bookmark.createBookmark(editor.selection.getRng());
+    const bookmark = Bookmark.createBookmark(editor.selection.getRng(true));
     let i, y;
     const root = Selection.getClosestListRootElm(editor, editor.selection.getStart(true));
 

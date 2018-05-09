@@ -14,28 +14,13 @@ import {
 } from '@ephox/snooker';
 import { Attr, Element, Node, SelectorFilter } from '@ephox/sugar';
 
-import * as Util from '../alien/Util';
+import Util from '../alien/Util';
 import Direction from '../queries/Direction';
 import { getCloneElements } from '../api/Settings';
 import { fireNewCell, fireNewRow } from '../api/Events';
-import { Editor } from 'tinymce/core/api/Editor';
 
-export interface TableActions {
-  deleteRow: (table: any, target: any) => any;
-  deleteColumn: (table: any, target: any) => any;
-  insertRowsBefore: (table: any, target: any) => any;
-  insertRowsAfter: (table: any, target: any) => any;
-  insertColumnsBefore: (table: any, target: any) => any;
-  insertColumnsAfter: (table: any, target: any) => any;
-  mergeCells: (table: any, target: any) => any;
-  unmergeCells: (table: any, target: any) => any;
-  pasteRowsBefore: (table: any, target: any) => any;
-  pasteRowsAfter: (table: any, target: any) => any;
-  pasteCells: (table: any, target: any) => any;
-}
-
-export const TableActions = function (editor: Editor, lazyWire) {
-  const isTableBody = function (editor: Editor) {
+export default function (editor, lazyWire) {
+  const isTableBody = function (editor) {
     return Node.name(Util.getBody(editor)) === 'table';
   };
 
@@ -114,4 +99,4 @@ export const TableActions = function (editor: Editor, lazyWire) {
     pasteRowsAfter,
     pasteCells
   };
-};
+}

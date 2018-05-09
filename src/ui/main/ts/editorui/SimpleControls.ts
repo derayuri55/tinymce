@@ -9,7 +9,7 @@
  */
 
 import Tools from 'tinymce/core/api/util/Tools';
-import * as FormatUtils from './FormatUtils';
+import FormatUtils from './FormatUtils';
 
 const registerFormatButtons = function (editor) {
   Tools.each({
@@ -23,7 +23,7 @@ const registerFormatButtons = function (editor) {
     editor.addButton(name, {
       active: false,
       tooltip: text,
-      onPostRender: FormatUtils.postRenderFormatToggle(editor, name),
+      onPostRender: FormatUtils.postRenderFormat(editor, name),
       onclick: FormatUtils.toggleFormat(editor, name)
     });
   });
@@ -60,7 +60,7 @@ const registerCommandToggleButtons = function (editor) {
       active: false,
       tooltip: item[0],
       cmd: item[1],
-      onPostRender: FormatUtils.postRenderFormatToggle(editor, name)
+      onPostRender: FormatUtils.postRenderFormat(editor, name)
     });
   });
 };

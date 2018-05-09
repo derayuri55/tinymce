@@ -10,12 +10,9 @@
 
 import Tools from 'tinymce/core/api/util/Tools';
 import Settings from '../api/Settings';
-import Actions, { LastSuggestion } from '../core/Actions';
-import { Cell } from '@ephox/katamari';
-import { Editor } from 'tinymce/core/api/Editor';
-import { DomTextMatcher } from 'tinymce/plugins/spellchecker/core/DomTextMatcher';
+import Actions from '../core/Actions';
 
-const buildMenuItems = function (listName: string, languageValues) {
+const buildMenuItems = function (listName, languageValues) {
   const items = [];
 
   Tools.each(languageValues, function (languageValue) {
@@ -29,9 +26,9 @@ const buildMenuItems = function (listName: string, languageValues) {
   return items;
 };
 
-const updateSelection = function (editor: Editor, currentLanguageState: Cell<string>) {
+const updateSelection = function (editor) {
   return function (e) {
-    const selectedLanguage = currentLanguageState.get();
+    const selectedLanguage = Settings.getLanguage(editor);
 
     e.control.items().each(function (ctrl) {
       ctrl.active(ctrl.settings.data === selectedLanguage);
@@ -50,7 +47,7 @@ const getItems = function (editor) {
   });
 };
 
-const register = function (editor: Editor, pluginUrl: string, startedState: Cell<boolean>, textMatcherState: Cell<DomTextMatcher>, currentLanguageState: Cell<string>, lastSuggestionsState: Cell<LastSuggestion>) {
+const register = function (editor, pluginUrl, startedState, textMatcherState, currentLanguageState, lastSuggestionsState) {
   const languageMenuItems = buildMenuItems('Language', getItems(editor));
   const startSpellchecking = function () {
     Actions.spellcheck(editor, pluginUrl, startedState, textMatcherState, lastSuggestionsState, currentLanguageState);
@@ -71,7 +68,7 @@ const register = function (editor: Editor, pluginUrl: string, startedState: Cell
   if (languageMenuItems.length > 1) {
     buttonArgs.type = 'splitbutton';
     buttonArgs.menu = languageMenuItems;
-    buttonArgs.onshow = updateSelection(editor, currentLanguageState);
+    buttonArgs.onshow = updateSelection(editor);
     buttonArgs.onselect = function (e) {
       currentLanguageState.set(e.control.settings.data);
     };

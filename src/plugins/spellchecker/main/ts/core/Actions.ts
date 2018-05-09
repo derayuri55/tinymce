@@ -13,11 +13,10 @@ import URI from 'tinymce/core/api/util/URI';
 import XHR from 'tinymce/core/api/util/XHR';
 import Events from '../api/Events';
 import Settings from '../api/Settings';
-import { DomTextMatcher } from './DomTextMatcher';
+import DomTextMatcher from './DomTextMatcher';
 import { Editor } from 'tinymce/core/api/Editor';
-import { Cell } from '@ephox/katamari';
 
-export type Data = string | {words: Record<string, string[]>, dictionary?: any};
+type Data = string | {words: any, dictionary?: any};
 
 const getTextMatcher = function (editor, textMatcherState) {
   if (!textMatcherState.get()) {
@@ -36,8 +35,8 @@ const isEmpty = function (obj) {
   return true;
 };
 
-const defaultSpellcheckCallback = function (editor: Editor, pluginUrl: string, currentLanguageState: Cell<string>) {
-  return function (method: string, text: string, doneCallback: Function, errorCallback: Function) {
+const defaultSpellcheckCallback = function (editor, pluginUrl, currentLanguageState) {
+  return function (method, text, doneCallback, errorCallback) {
     const data = { method, lang: currentLanguageState.get() };
     let postData = '';
 
@@ -78,13 +77,13 @@ const defaultSpellcheckCallback = function (editor: Editor, pluginUrl: string, c
   };
 };
 
-const sendRpcCall = function (editor: Editor, pluginUrl: string, currentLanguageState: Cell<string>, name: string, data: string, successCallback: Function, errorCallback?: Function) {
+const sendRpcCall = function (editor: Editor, pluginUrl: string, currentLanguageState, name: string, data: Data, successCallback: Function, errorCallback?: Function) {
   const userSpellcheckCallback = Settings.getSpellcheckerCallback(editor);
   const spellCheckCallback = userSpellcheckCallback ? userSpellcheckCallback : defaultSpellcheckCallback(editor, pluginUrl, currentLanguageState);
   spellCheckCallback.call(editor.plugins.spellchecker, name, data, successCallback, errorCallback);
 };
 
-const spellcheck = function (editor: Editor, pluginUrl: string, startedState: Cell<boolean>, textMatcherState: Cell<DomTextMatcher>, lastSuggestionsState: Cell<LastSuggestion>, currentLanguageState: Cell<string>) {
+const spellcheck = function (editor: Editor, pluginUrl: string, startedState, textMatcherState, lastSuggestionsState, currentLanguageState) {
   if (finish(editor, startedState, textMatcherState)) {
     return;
   }
@@ -104,13 +103,13 @@ const spellcheck = function (editor: Editor, pluginUrl: string, startedState: Ce
   editor.focus();
 };
 
-const checkIfFinished = function (editor: Editor, startedState: Cell<boolean>, textMatcherState: Cell<DomTextMatcher>) {
+const checkIfFinished = function (editor, startedState, textMatcherState) {
   if (!editor.dom.select('span.mce-spellchecker-word').length) {
     finish(editor, startedState, textMatcherState);
   }
 };
 
-const addToDictionary = function (editor: Editor, pluginUrl: string, startedState: Cell<boolean>, textMatcherState: Cell<DomTextMatcher>, currentLanguageState: Cell<string>, word: string, spans: Element[]) {
+const addToDictionary = function (editor: Editor, pluginUrl: string, startedState, textMatcherState, currentLanguageState, word: string, spans: Element[]) {
   editor.setProgressState(true);
 
   sendRpcCall(editor, pluginUrl, currentLanguageState, 'addToDictionary', word, () => {
@@ -123,7 +122,7 @@ const addToDictionary = function (editor: Editor, pluginUrl: string, startedStat
   });
 };
 
-const ignoreWord = function (editor: Editor, startedState: Cell<boolean>, textMatcherState: Cell<DomTextMatcher>, word: string, spans: Element[], all?: boolean) {
+const ignoreWord = function (editor: Editor, startedState, textMatcherState, word: string, spans: Element[], all?) {
   editor.selection.collapse();
 
   if (all) {
@@ -139,7 +138,7 @@ const ignoreWord = function (editor: Editor, startedState: Cell<boolean>, textMa
   checkIfFinished(editor, startedState, textMatcherState);
 };
 
-const finish = function (editor: Editor, startedState: Cell<boolean>, textMatcherState: Cell<DomTextMatcher>) {
+const finish = function (editor, startedState, textMatcherState) {
   getTextMatcher(editor, textMatcherState).reset();
   textMatcherState.set(null);
 
@@ -150,7 +149,7 @@ const finish = function (editor: Editor, startedState: Cell<boolean>, textMatche
   }
 };
 
-const getElmIndex = function (elm: HTMLElement) {
+const getElmIndex = function (elm) {
   const value = elm.getAttribute('data-mce-index');
 
   if (typeof value === 'number') {
@@ -160,7 +159,7 @@ const getElmIndex = function (elm: HTMLElement) {
   return value;
 };
 
-const findSpansByIndex = function (editor: Editor, index: string) {
+const findSpansByIndex = function (editor, index) {
   let nodes;
   const spans = [];
 
@@ -182,12 +181,7 @@ const findSpansByIndex = function (editor: Editor, index: string) {
   return spans;
 };
 
-export interface LastSuggestion {
-  suggestions: string | string[];
-  hasDictionarySupport: boolean;
-}
-
-const markErrors = function (editor: Editor, startedState: Cell<boolean>, textMatcherState: Cell<DomTextMatcher>, lastSuggestionsState: Cell<LastSuggestion>, data: Data) {
+const markErrors = function (editor, startedState, textMatcherState, lastSuggestionsState, data: Data) {
   let suggestions, hasDictionarySupport;
 
   if (typeof data !== 'string' && data.words) {

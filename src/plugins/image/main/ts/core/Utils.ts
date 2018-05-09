@@ -77,14 +77,14 @@ const buildListItems = function (inputList, itemCallback, startItems?) {
   return appendItems(inputList, startItems || []);
 };
 
-const removePixelSuffix = (value: string): string => {
+const removePixelSuffix = function (value) {
   if (value) {
     value = value.replace(/px$/, '');
   }
   return value;
 };
 
-const addPixelSuffix = (value: string): string => {
+const addPixelSuffix = function (value) {
   if (value.length > 0 && /^[0-9]+$/.test(value)) {
     value += 'px';
   }

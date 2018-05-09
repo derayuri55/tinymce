@@ -34,7 +34,7 @@ const onSrcChange = function (evt, editor) {
       if (data.width && data.height && Settings.hasDimensions(editor)) {
         rootControl.find('#width').value(data.width);
         rootControl.find('#height').value(data.height);
-        SizeManager.syncSize(rootControl);
+        SizeManager.updateSize(rootControl);
       }
     });
   }

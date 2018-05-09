@@ -42,17 +42,12 @@ const isCaretCandidate = (node: Node): boolean => {
     return true;
   }
 
-  return isAtomicInline(node) || isBr(node) || isTable(node) || isNonUiContentEditableFalse(node);
+  return isAtomicInline(node) || isBr(node) || isTable(node) || isContentEditableFalse(node);
 };
-
-// UI components on IE is marked with contenteditable=false and unselectable=true so lets not handle those as real content editables
-const isUnselectable = (node: Node) => NodeType.isElement(node) && node.getAttribute('unselectable') === 'true';
-
-const isNonUiContentEditableFalse = (node: Node): node is HTMLElement => isUnselectable(node) === false && isContentEditableFalse(node);
 
 const isInEditable = (node: Node, root: Node): boolean => {
   for (node = node.parentNode; node && node !== root; node = node.parentNode) {
-    if (isNonUiContentEditableFalse(node)) {
+    if (isContentEditableFalse(node)) {
       return false;
     }
 
@@ -65,7 +60,7 @@ const isInEditable = (node: Node, root: Node): boolean => {
 };
 
 const isAtomicContentEditableFalse = (node: Node): boolean => {
-  if (!isNonUiContentEditableFalse(node)) {
+  if (!isContentEditableFalse(node)) {
     return false;
   }
 

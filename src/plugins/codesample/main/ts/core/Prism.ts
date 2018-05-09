@@ -15,11 +15,10 @@
 /*eslint-enable */
 
 declare const WorkerGlobalScope: any;
+declare const module: any;
+declare const global: any;
 
-const window: any = {};
-const global: any = window;
-const module: any = { exports: {} };
-
+const window = {};
 // ------------------ Start wrap
 
 /* http://prismjs.com/download.html?themes=prism-dark&languages=markup+css+clike+javascript+c+csharp+cpp+java+php+python+ruby */

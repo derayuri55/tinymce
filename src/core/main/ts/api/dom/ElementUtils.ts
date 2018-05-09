@@ -8,9 +8,8 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import Bookmarks from '../../bookmark/Bookmarks';
+import Bookmarks from '../../dom/Bookmarks';
 import Tools from '../util/Tools';
-import { DOMUtils } from 'tinymce/core/api/dom/DOMUtils';
 
 /**
  * Utility class for various element specific functions.
@@ -21,7 +20,7 @@ import { DOMUtils } from 'tinymce/core/api/dom/DOMUtils';
 
 const each = Tools.each;
 
-const ElementUtils = function (dom: DOMUtils) {
+const ElementUtils = function (dom) {
   /**
    * Compares two nodes and checks if it's attributes and styles matches.
    * This doesn't compare classes as items since their order is significant.

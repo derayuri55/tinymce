@@ -15,7 +15,9 @@
  * @class tinymce.util.Arr
  */
 
-const isArray = Array.isArray;
+const isArray = Array.isArray || function (obj) {
+  return Object.prototype.toString.call(obj) === '[object Array]';
+};
 
 const toArray = function (obj) {
   let array = obj, i, l;

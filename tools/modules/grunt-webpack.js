@@ -18,13 +18,6 @@ let getCurrentGitBranch = () => {
   return 'master';
 };
 
-const getLastMasterCommitSha = () => {
-  const currentBranch = getCurrentGitBranch();
-  const commitPath =  path.resolve('.git/refs/heads/master');
-
-  return fs.readFileSync(commitPath, 'utf-8');
-}
-
 let create = (entries, tsConfig, outDir, filename) => {
   return {
     entry: entries,
@@ -68,8 +61,7 @@ let create = (entries, tsConfig, outDir, filename) => {
         cacheDirectory: path.resolve(`scratch/cache/hard-source/[confighash]`),
         recordsPath: path.resolve(`scratch/cache/hard-source/[confighash]/records.json`),
         configHash: function(webpackConfig) {
-          const branchName = getCurrentGitBranch();
-          return require('node-object-hash')({sort: false}).hash({ gitBranch: branchName === 'master' ? getLastMasterCommitSha() : branchName, webpackConfig });
+          return require('node-object-hash')({sort: false}).hash({ gitBranch: getCurrentGitBranch(), webpackConfig });
         }
       })
     ],

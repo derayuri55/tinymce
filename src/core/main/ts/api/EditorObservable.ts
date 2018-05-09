@@ -11,8 +11,6 @@
 import Observable from './util/Observable';
 import DOMUtils from './dom/DOMUtils';
 import Tools from './util/Tools';
-import { Editor } from 'tinymce/core/api/Editor';
-import { isReadOnly } from 'tinymce/core/Mode';
 
 /**
  * This mixin contains the event logic for the tinymce.Editor class.
@@ -34,7 +32,7 @@ let customEventRootDelegates;
  * @param {String} eventName Name of the event for example "click".
  * @return {Element/Document} HTML Element or document target to bind on.
  */
-const getEventTarget = function (editor: Editor, eventName: string): Node {
+const getEventTarget = function (editor, eventName) {
   if (eventName === 'selectionchange') {
     return editor.getDoc();
   }
@@ -57,16 +55,6 @@ const getEventTarget = function (editor: Editor, eventName: string): Node {
   return editor.getBody();
 };
 
-const isListening = (editor: Editor) => !editor.hidden && !editor.readonly;
-
-const fireEvent = (editor: Editor, eventName: string, e: Event) => {
-  if (isListening(editor)) {
-    editor.fire(eventName, e);
-  } else if (isReadOnly(editor)) {
-    e.preventDefault();
-  }
-};
-
 /**
  * Binds a event delegate for the specified name this delegate will fire
  * the event to the editor dispatcher.
@@ -75,8 +63,12 @@ const fireEvent = (editor: Editor, eventName: string, e: Event) => {
  * @param {tinymce.Editor} editor Editor instance to get event target from.
  * @param {String} eventName Name of the event for example "click".
  */
-const bindEventDelegate = function (editor: Editor, eventName: string) {
+const bindEventDelegate = function (editor, eventName) {
   let eventRootElm, delegate;
+
+  const isListening = function (editor) {
+    return !editor.hidden && !editor.readonly;
+  };
 
   if (!editor.delegates) {
     editor.delegates = {};
@@ -119,7 +111,9 @@ const bindEventDelegate = function (editor: Editor, eventName: string) {
         const body = editors[i].getBody();
 
         if (body === target || DOM.isChildOf(target, body)) {
-          fireEvent(editors[i], eventName, e);
+          if (isListening(editors[i])) {
+            editors[i].fire(eventName, e);
+          }
         }
       }
     };
@@ -128,7 +122,9 @@ const bindEventDelegate = function (editor: Editor, eventName: string) {
     DOM.bind(eventRootElm, eventName, delegate);
   } else {
     delegate = function (e) {
-      fireEvent(editor, eventName, e);
+      if (isListening(editor)) {
+        editor.fire(eventName, e);
+      }
     };
 
     DOM.bind(eventRootElm, eventName, delegate);
@@ -188,7 +184,7 @@ let EditorObservable = {
   unbindAllNativeEvents () {
     const self = this;
     const body = self.getBody();
-    const dom: DOMUtils = self.dom;
+    const dom = self.dom;
     let name;
 
     if (self.delegates) {

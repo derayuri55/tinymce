@@ -6,15 +6,7 @@ import MobileSchema from './MobileSchema';
 import IosMode from '../ios/core/IosMode';
 import TapToEditMask from '../touch/view/TapToEditMask';
 
-export interface MobileWebApp {
-  setReadOnly(): void;
-  refreshStructure(): void;
-  enter(): void;
-  exit(): void;
-  destroy(): void;
-}
-
-const produce = function (raw: {any}): MobileWebApp {
+const produce = function (raw) {
   const mobile = ValueSchema.asRawOrDie(
     'Getting IosWebapp schema',
     MobileSchema,
@@ -23,10 +15,10 @@ const produce = function (raw: {any}): MobileWebApp {
 
   /* Make the toolbar */
   Css.set(mobile.toolstrip, 'width', '100%');
-  Css.set(mobile.container, 'position', 'relative');
 
+  Css.set(mobile.container, 'position', 'relative');
   const onView = function () {
-    mobile.setReadOnly(mobile.readOnlyOnInit());
+    mobile.setReadOnly(true);
     mode.enter();
   };
 
@@ -51,7 +43,7 @@ const produce = function (raw: {any}): MobileWebApp {
     refreshStructure: mode.refreshStructure,
     enter: mode.enter,
     exit: mode.exit,
-    destroy: Fun.noop  // TODO: lifecycle hookup
+    destroy: Fun.noop
   };
 };
 

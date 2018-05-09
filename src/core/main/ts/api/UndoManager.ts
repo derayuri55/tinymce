@@ -8,10 +8,9 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import GetBookmark from '../bookmark/GetBookmark';
-import Levels, { UndoLevel } from '../undo/Levels';
+import GetBookmark from '../dom/GetBookmark';
+import Levels from '../undo/Levels';
 import Tools from './util/Tools';
-import { Editor } from 'tinymce/core/api/Editor';
 
 /**
  * This class handles the undo/redo history levels for the editor. Since the built-in undo/redo has major drawbacks a custom one was needed.
@@ -19,23 +18,8 @@ import { Editor } from 'tinymce/core/api/Editor';
  * @class tinymce.UndoManager
  */
 
-export interface UndoManager {
-  data: UndoLevel[];
-  typing: boolean;
-  add: (level?: UndoLevel, event?: Event) => UndoLevel;
-  beforeChange: () => void;
-  undo: () => UndoLevel;
-  redo: () => UndoLevel;
-  clear: () => void;
-  hasUndo: () => boolean;
-  hasRedo: () => boolean;
-  transact: (callback: () => void) => UndoLevel;
-  ignore: (callback: () => void) => void;
-  extra: (callback1: () => void, callback2: () => void) => void;
-}
-
-export default function (editor: Editor) {
-  let self: UndoManager = this, index = 0, data = [], beforeBookmark, isFirstTypedCharacter, locks = 0;
+export default function (editor) {
+  let self = this, index = 0, data = [], beforeBookmark, isFirstTypedCharacter, locks = 0;
 
   const isUnlocked = function () {
     return locks === 0;
@@ -53,7 +37,7 @@ export default function (editor: Editor) {
 
   const addNonTypingUndoLevel = function (e?) {
     setTyping(false);
-    self.add({} as UndoLevel, e);
+    self.add({}, e);
   };
 
   const endTyping = function () {
@@ -148,7 +132,7 @@ export default function (editor: Editor) {
     if ((keyCode < 16 || keyCode > 20) && keyCode !== 224 && keyCode !== 91 && !self.typing && !modKey) {
       self.beforeChange();
       setTyping(true);
-      self.add({} as UndoLevel, e);
+      self.add({}, e);
       isFirstTypedCharacter = true;
     }
   });
@@ -214,13 +198,13 @@ export default function (editor: Editor) {
      * @param {DOMEvent} event Optional event responsible for the creation of the undo level.
      * @return {Object} Undo level that got added or null it a level wasn't needed.
      */
-    add (level?: UndoLevel, event?: Event): UndoLevel {
+    add (level, event) {
       let i;
       const settings = editor.settings;
       let lastLevel, currentLevel;
 
       currentLevel = Levels.createFromEditor(editor);
-      level = level || {} as UndoLevel;
+      level = level || {};
       level = Tools.extend(level, currentLevel);
 
       if (isUnlocked() === false || editor.removed) {
@@ -283,8 +267,8 @@ export default function (editor: Editor) {
      * @method undo
      * @return {Object} Undo level or null if no undo was performed.
      */
-    undo (): UndoLevel {
-      let level: UndoLevel;
+    undo () {
+      let level;
 
       if (self.typing) {
         self.add();
@@ -308,8 +292,8 @@ export default function (editor: Editor) {
      * @method redo
      * @return {Object} Redo level or null if no redo was performed.
      */
-    redo (): UndoLevel {
-      let level: UndoLevel;
+    redo () {
+      let level;
 
       if (index < data.length - 1) {
         level = data[++index];
@@ -365,7 +349,7 @@ export default function (editor: Editor) {
      * @param {function} callback Function that gets executed and has dom manipulation logic in it.
      * @return {Object} Undo level that got added or null it a level wasn't needed.
      */
-    transact (callback: () => void): UndoLevel {
+    transact (callback) {
       endTyping();
       self.beforeChange();
       self.ignore(callback);
@@ -379,8 +363,9 @@ export default function (editor: Editor) {
      *
      * @method ignore
      * @param {function} callback Function that gets executed and has dom manipulation logic in it.
+     * @return {Object} Undo level that got added or null it a level wasn't needed.
      */
-    ignore (callback: () => void) {
+    ignore (callback) {
       try {
         locks++;
         callback();
@@ -398,7 +383,7 @@ export default function (editor: Editor) {
      * @param {function} callback1 Function that does mutation but gets stored as a "hidden" extra undo level.
      * @param {function} callback2 Function that does mutation but gets displayed to the user.
      */
-    extra (callback1: () => void, callback2: () => void) {
+    extra (callback1, callback2) {
       let lastLevel, bookmark;
 
       if (self.transact(callback1)) {

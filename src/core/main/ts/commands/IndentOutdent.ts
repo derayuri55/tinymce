@@ -33,7 +33,7 @@ export const handle = (editor: Editor, command: string) => {
       formatter.apply('div');
     }
 
-    Arr.each(selection.getSelectedBlocks(), (element: HTMLElement) =>
+    Arr.each(selection.getSelectedBlocks(), (element) =>
       indentElement(dom, command, useMargin, indentValue, indentUnit, element)
     );
   }

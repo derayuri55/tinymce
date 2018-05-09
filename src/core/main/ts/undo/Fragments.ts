@@ -11,7 +11,6 @@
 import Entities from '../api/html/Entities';
 import Diff from './Diff';
 import Arr from '../util/Arr';
-import NodeType from 'tinymce/core/dom/NodeType';
 
 /**
  * This module reads and applies html fragments from/to dom nodes.
@@ -20,19 +19,19 @@ import NodeType from 'tinymce/core/dom/NodeType';
  * @private
  */
 
-const getOuterHtml = function (elm: Node): string {
-  if (NodeType.isElement(elm)) {
+const getOuterHtml = function (elm) {
+  if (elm.nodeType === 1) {
     return elm.outerHTML;
-  } else if (NodeType.isText(elm)) {
+  } else if (elm.nodeType === 3) {
     return Entities.encodeRaw(elm.data, false);
-  } else if (NodeType.isComment(elm)) {
+  } else if (elm.nodeType === 8) {
     return '<!--' + elm.data + '-->';
   }
 
   return '';
 };
 
-const createFragment = function (html: string): DocumentFragment {
+const createFragment = function (html) {
   let frag, node, container;
 
   container = document.createElement('div');
@@ -49,7 +48,7 @@ const createFragment = function (html: string): DocumentFragment {
   return frag;
 };
 
-const insertAt = function (elm: Element, html: string, index: number) {
+const insertAt = function (elm, html, index) {
   const fragment = createFragment(html);
   if (elm.hasChildNodes() && index < elm.childNodes.length) {
     const target = elm.childNodes[index];
@@ -59,14 +58,14 @@ const insertAt = function (elm: Element, html: string, index: number) {
   }
 };
 
-const removeAt = function (elm: Element, index: number) {
+const removeAt = function (elm, index) {
   if (elm.hasChildNodes() && index < elm.childNodes.length) {
     const target = elm.childNodes[index];
     target.parentNode.removeChild(target);
   }
 };
 
-const applyDiff = function (diff, elm: Element) {
+const applyDiff = function (diff, elm) {
   let index = 0;
   Arr.each(diff, function (action) {
     if (action[0] === Diff.KEEP) {
@@ -80,13 +79,13 @@ const applyDiff = function (diff, elm: Element) {
   });
 };
 
-const read = function (elm: Element): string[] {
+const read = function (elm) {
   return Arr.filter(Arr.map(elm.childNodes, getOuterHtml), function (item) {
     return item.length > 0;
   });
 };
 
-const write = function (fragments: string[], elm: Element): Element {
+const write = function (fragments, elm) {
   const currentFragments = Arr.map(elm.childNodes, getOuterHtml);
   applyDiff(Diff.diff(currentFragments, fragments), elm);
   return elm;

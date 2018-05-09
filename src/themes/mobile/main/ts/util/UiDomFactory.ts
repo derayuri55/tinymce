@@ -1,8 +1,8 @@
-import { DomFactory, Sketcher } from '@ephox/alloy';
+import { DomFactory } from '@ephox/alloy';
 import { Strings } from '@ephox/katamari';
 import Styles from '../style/Styles';
 
-const dom = function (rawHtml): Sketcher.RawElementSchema {
+const dom = function (rawHtml) {
   const html = Strings.supplant(rawHtml, {
     prefix: Styles.prefix()
   });
@@ -16,7 +16,7 @@ const spec = function (rawHtml) {
   };
 };
 
-export {
+export default {
   dom,
   spec
 };

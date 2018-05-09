@@ -308,8 +308,6 @@ export default function (settings?, schema = Schema()) {
     const allWhiteSpaceRegExp = /[ \t\r\n]+/g;
     const isAllWhiteSpaceRegExp = /^[ \t\r\n]+$/;
 
-    isInWhiteSpacePreservedElement = whiteSpaceElements.hasOwnProperty(args.context) || whiteSpaceElements.hasOwnProperty(settings.root_name);
-
     const addRootBlocks = function () {
       let node = rootNode.firstChild, next, rootBlockNode;
 

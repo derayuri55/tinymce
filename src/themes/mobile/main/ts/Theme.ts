@@ -1,12 +1,13 @@
-import { AlloyTriggers, Attachment, Swapping } from '@ephox/alloy';
+import { AlloyTriggers, Attachment, Debugging, Swapping } from '@ephox/alloy';
 import { Cell, Fun } from '@ephox/katamari';
 import { PlatformDetection } from '@ephox/sand';
 import { Element, Focus, Insert, Node } from '@ephox/sugar';
+
 import DOMUtils from 'tinymce/core/api/dom/DOMUtils';
 import ThemeManager from 'tinymce/core/api/ThemeManager';
 
 import TinyCodeDupe from './alien/TinyCodeDupe';
-import * as Settings from './api/Settings';
+import Settings from './api/Settings';
 import TinyChannels from './channels/TinyChannels';
 import Features from './features/Features';
 import Styles from './style/Styles';
@@ -57,31 +58,14 @@ ThemeManager.add('mobile', function (editor) {
       onReady: Fun.noop
     });
 
-    const setReadOnly = function (dynamicGroup, readOnlyGroups, mainGroups, ro) {
+    const setReadOnly = function (readOnlyGroups, mainGroups, ro) {
       if (ro === false) {
         editor.selection.collapse();
       }
-      const toolbars = configureToolbar(dynamicGroup, readOnlyGroups, mainGroups);
-      realm.setToolbarGroups(ro === true ? toolbars.readOnly : toolbars.main);
-
+      realm.setToolbarGroups(ro ? readOnlyGroups.get() : mainGroups.get());
       editor.setMode(ro === true ? 'readonly' : 'design');
       editor.fire(ro === true ? READING() : EDITING());
       realm.updateMode(ro);
-    };
-
-    const configureToolbar = function (dynamicGroup, readOnlyGroups, mainGroups) {
-      const dynamic = dynamicGroup.get();
-      const toolbars = {
-        readOnly: dynamic.backToMask.concat(readOnlyGroups.get()),
-        main: dynamic.backToMask.concat(mainGroups.get())
-      };
-
-      if (Settings.readOnlyOnInit(editor)) {
-        toolbars.readOnly = dynamic.backToMask.concat(readOnlyGroups.get());
-        toolbars.main = dynamic.backToReadOnly.concat(mainGroups.get());
-      }
-
-      return toolbars;
     };
 
     const bindHandler = function (label, handler) {
@@ -169,11 +153,7 @@ ThemeManager.add('mobile', function (editor) {
         translate: Fun.noop,
 
         setReadOnly (ro) {
-          setReadOnly(dynamicGroup, readOnlyGroups, mainGroups, ro);
-        },
-
-        readOnlyOnInit () {
-          return Settings.readOnlyOnInit(editor);
+          setReadOnly(readOnlyGroups, mainGroups, ro);
         }
       });
 
@@ -182,6 +162,8 @@ ThemeManager.add('mobile', function (editor) {
           realm.system().broadcastOn([ TinyChannels.dropupDismissed() ], { });
         });
       };
+
+      Debugging.registerInspector('remove this', realm.system());
 
       const backToMaskGroup = {
         label: 'The first group',
@@ -199,7 +181,7 @@ ThemeManager.add('mobile', function (editor) {
         scrollable: false,
         items: [
           Buttons.forToolbar('readonly-back', function (/* btn */) {
-            setReadOnly(dynamicGroup, readOnlyGroups, mainGroups, true);
+            setReadOnly(readOnlyGroups, mainGroups, true);
           }, {})
         ]
       };
@@ -227,12 +209,9 @@ ThemeManager.add('mobile', function (editor) {
         ]
       };
 
-      const mainGroups = Cell([ actionGroup, extraGroup ]);
-      const readOnlyGroups = Cell([ readOnlyGroup, extraGroup ]);
-      const dynamicGroup = Cell({
-        backToMask: [ backToMaskGroup ],
-        backToReadOnly: [ backToReadOnlyGroup ]
-      });
+      const mainGroups = Cell([ backToReadOnlyGroup, actionGroup, extraGroup ]);
+      const readOnlyGroups = Cell([ backToMaskGroup, readOnlyGroup, extraGroup ]);
+
       // Investigate ways to keep in sync with the ui
       FormatChangers.init(realm, editor);
     });

@@ -15,23 +15,19 @@ import BoundaryCaret from './BoundaryCaret';
 import BoundaryLocation from './BoundaryLocation';
 import InlineUtils from './InlineUtils';
 import WordSelection from '../selection/WordSelection';
-import { Editor } from 'tinymce/core/api/Editor';
-import { DOMUtils } from 'tinymce/core/api/dom/DOMUtils';
 
-const setCaretPosition = function (editor: Editor, pos: CaretPosition) {
+const setCaretPosition = function (editor, pos) {
   const rng = editor.dom.createRng();
   rng.setStart(pos.container(), pos.offset());
   rng.setEnd(pos.container(), pos.offset());
   editor.selection.setRng(rng);
 };
 
-type NodePredicate = (node: Node) => boolean;
-
-const isFeatureEnabled = function (editor: Editor) {
+const isFeatureEnabled = function (editor) {
   return editor.settings.inline_boundaries !== false;
 };
 
-const setSelected = function (state: boolean, elm: HTMLElement) {
+const setSelected = function (state, elm) {
   if (state) {
     elm.setAttribute('data-mce-selected', 'inline-boundary');
   } else {
@@ -39,14 +35,14 @@ const setSelected = function (state: boolean, elm: HTMLElement) {
   }
 };
 
-const renderCaretLocation = function (editor: Editor, caret: Cell<Text>, location) {
+const renderCaretLocation = function (editor, caret, location) {
   return BoundaryCaret.renderCaret(caret, location).map(function (pos) {
     setCaretPosition(editor, pos);
     return location;
   });
 };
 
-const findLocation = function (editor: Editor, caret: Cell<Text>, forward: boolean) {
+const findLocation = function (editor, caret, forward) {
   const rootNode = editor.getBody();
   const from = CaretPosition.fromRangeStart(editor.selection.getRng());
   const isInlineTarget = Fun.curry(InlineUtils.isInlineTarget, editor);
@@ -56,14 +52,14 @@ const findLocation = function (editor: Editor, caret: Cell<Text>, forward: boole
   });
 };
 
-const toggleInlines = function (isInlineTarget: NodePredicate, dom: DOMUtils, elms: Node[]) {
+const toggleInlines = function (isInlineTarget, dom, elms) {
   const selectedInlines = Arr.filter(dom.select('*[data-mce-selected="inline-boundary"]'), isInlineTarget);
   const targetInlines = Arr.filter(elms, isInlineTarget);
   Arr.each(Arr.difference(selectedInlines, targetInlines), Fun.curry(setSelected, false));
   Arr.each(Arr.difference(targetInlines, selectedInlines), Fun.curry(setSelected, true));
 };
 
-const safeRemoveCaretContainer = function (editor: Editor, caret: Cell<Text>) {
+const safeRemoveCaretContainer = function (editor, caret) {
   if (editor.selection.isCollapsed() && editor.composing !== true && caret.get()) {
     const pos = CaretPosition.fromRangeStart(editor.selection.getRng());
     if (CaretPosition.isTextPosition(pos) && InlineUtils.isAtZwsp(pos) === false) {
@@ -73,7 +69,7 @@ const safeRemoveCaretContainer = function (editor: Editor, caret: Cell<Text>) {
   }
 };
 
-const renderInsideInlineCaret = function (isInlineTarget: NodePredicate, editor: Editor, caret: Cell<Text>, elms: Node[]) {
+const renderInsideInlineCaret = function (isInlineTarget, editor, caret, elms) {
   if (editor.selection.isCollapsed()) {
     const inlines = Arr.filter(elms, isInlineTarget);
     Arr.each(inlines, function (inline) {
@@ -85,21 +81,21 @@ const renderInsideInlineCaret = function (isInlineTarget: NodePredicate, editor:
   }
 };
 
-const move = function (editor: Editor, caret: Cell<Text>, forward: boolean) {
+const move = function (editor, caret, forward) {
   return function () {
     return isFeatureEnabled(editor) ? findLocation(editor, caret, forward).isSome() : false;
   };
 };
 
-const moveWord = function (forward: boolean, editor: Editor, caret: Cell<Text>) {
+const moveWord = function (forward, editor, caret) {
   return function () {
     return isFeatureEnabled(editor) ? WordSelection.moveByWord(forward, editor) : false;
   };
 };
 
-const setupSelectedState = function (editor: Editor): Cell<Text> {
+const setupSelectedState = function (editor) {
   const caret = Cell(null);
-  const isInlineTarget: NodePredicate  = Fun.curry(InlineUtils.isInlineTarget, editor);
+  const isInlineTarget = Fun.curry(InlineUtils.isInlineTarget, editor);
 
   editor.on('NodeChange', function (e) {
     if (isFeatureEnabled(editor)) {
@@ -112,15 +108,10 @@ const setupSelectedState = function (editor: Editor): Cell<Text> {
   return caret;
 };
 
-type MoveWordFn = (editor: Editor, caret: Cell<Text>) => () => boolean;
-
-const moveNextWord = Fun.curry(moveWord, true) as MoveWordFn;
-const movePrevWord = Fun.curry(moveWord, false) as MoveWordFn;
-
 export default {
   move,
-  moveNextWord,
-  movePrevWord,
+  moveNextWord: Fun.curry(moveWord, true),
+  movePrevWord: Fun.curry(moveWord, false),
   setupSelectedState,
   setCaretPosition
 };

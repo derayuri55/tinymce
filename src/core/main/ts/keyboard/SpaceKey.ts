@@ -11,10 +11,8 @@
 import InsertSpace from './InsertSpace';
 import MatchKeys from './MatchKeys';
 import VK from '../api/util/VK';
-import { Editor } from 'tinymce/core/api/Editor';
-import { EditorEvent } from 'tinymce/core/api/dom/EventUtils';
 
-const executeKeydownOverride = function (editor: Editor, evt: KeyboardEvent) {
+const executeKeydownOverride = function (editor, evt) {
   MatchKeys.execute([
     { keyCode: VK.SPACEBAR, action: MatchKeys.action(InsertSpace.insertAtSelection, editor) }
   ], evt).each(function (_) {
@@ -22,8 +20,8 @@ const executeKeydownOverride = function (editor: Editor, evt: KeyboardEvent) {
   });
 };
 
-const setup = function (editor: Editor) {
-  editor.on('keydown', function (evt: EditorEvent<KeyboardEvent>) {
+const setup = function (editor) {
+  editor.on('keydown', function (evt) {
     if (evt.isDefaultPrevented() === false) {
       executeKeydownOverride(editor, evt);
     }

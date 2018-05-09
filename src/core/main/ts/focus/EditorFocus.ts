@@ -17,19 +17,18 @@ import * as RangeNodes from '../selection/RangeNodes';
 import SelectionBookmark from '../selection/SelectionBookmark';
 import { Selection } from '../api/dom/Selection';
 import { CaretPosition } from '../caret/CaretPosition';
-import { Editor } from 'tinymce/core/api/Editor';
 
-const getContentEditableHost = (editor: Editor, node: Node) => {
+const getContentEditableHost = function (editor, node) {
   return editor.dom.getParent(node, function (node) {
     return editor.dom.getContentEditable(node) === 'true';
   });
 };
 
-const getCollapsedNode = (rng: Range) => {
+const getCollapsedNode = function (rng) {
   return rng.collapsed ? Option.from(RangeNodes.getNode(rng.startContainer, rng.startOffset)).map(Element.fromDom) : Option.none();
 };
 
-const getFocusInElement = (root, rng: Range) => {
+const getFocusInElement = function (root, rng) {
   return getCollapsedNode(rng).bind(function (node) {
     if (ElementType.isTableSection(node)) {
       return Option.some(node);
@@ -41,16 +40,16 @@ const getFocusInElement = (root, rng: Range) => {
   });
 };
 
-const normalizeSelection = (editor: Editor, rng: Range): void => {
+const normalizeSelection = (editor, rng: Range): void => {
   getFocusInElement(Element.fromDom(editor.getBody()), rng).bind(function (elm) {
     return CaretFinder.firstPositionIn(elm.dom());
   }).fold(
-    () => { editor.selection.normalize(); return; },
+    () => editor.selection.normalize(),
     (caretPos: CaretPosition) => editor.selection.setRng(caretPos.toRange())
   );
 };
 
-const focusBody = (body) => {
+const focusBody = function (body) {
   if (body.setActive) {
     // IE 11 sometimes throws "Invalid function" then fallback to focus
     // setActive is better since it doesn't scroll to the element being focused
@@ -64,30 +63,32 @@ const focusBody = (body) => {
   }
 };
 
-const hasElementFocus = (elm): boolean => {
+const hasElementFocus = function (elm) {
   return Focus.hasFocus(elm) || Focus.search(elm).isSome();
 };
 
-const hasIframeFocus = (editor: Editor): boolean => {
+const hasIframeFocus = function (editor) {
   return editor.iframeElement && Focus.hasFocus(Element.fromDom(editor.iframeElement));
 };
 
-const hasInlineFocus = (editor: Editor) => {
+const hasInlineFocus = function (editor) {
   const rawBody = editor.getBody();
   return rawBody && hasElementFocus(Element.fromDom(rawBody));
 };
 
-const hasFocus = (editor: Editor) => editor.inline ? hasInlineFocus(editor) : hasIframeFocus(editor);
+const hasFocus = function (editor) {
+  return editor.inline ? hasInlineFocus(editor) : hasIframeFocus(editor);
+};
 
-const focusEditor = (editor: Editor) => {
+const focusEditor = function (editor) {
   const selection: Selection = editor.selection, contentEditable = editor.settings.content_editable;
   const body = editor.getBody();
-  let rng = selection.getRng();
+  let contentEditableHost, rng = selection.getRng();
 
   editor.quirks.refreshContentEditable();
 
   // Move focus to contentEditable=true child if needed
-  const contentEditableHost = getContentEditableHost(editor, selection.getNode());
+  contentEditableHost = getContentEditableHost(editor, selection.getNode());
   if (editor.$.contains(body, contentEditableHost)) {
     focusBody(contentEditableHost);
     normalizeSelection(editor, rng);
@@ -122,9 +123,11 @@ const focusEditor = (editor: Editor) => {
   activateEditor(editor);
 };
 
-const activateEditor = (editor: Editor) => editor.editorManager.setActive(editor);
+const activateEditor = function (editor) {
+  editor.editorManager.setActive(editor);
+};
 
-const focus = (editor: Editor, skipFocus: boolean) => {
+const focus = function (editor, skipFocus) {
   if (editor.removed) {
     return;
   }

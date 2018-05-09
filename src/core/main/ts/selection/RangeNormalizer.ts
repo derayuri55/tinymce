@@ -12,7 +12,7 @@ import CaretFinder from '../caret/CaretFinder';
 import CaretPosition from '../caret/CaretPosition';
 import * as CaretUtils from '../caret/CaretUtils';
 
-const createRange = (sc: Node, so: number, ec: Node, eo: number): Range => {
+const createRange = function (sc, so, ec, eo) {
   const rng = document.createRange();
   rng.setStart(sc, so);
   rng.setEnd(ec, eo);
@@ -26,7 +26,7 @@ const createRange = (sc: Node, so: number, ec: Node, eo: number): Range => {
 // We would want it to be:
 //   <blockquote><p>[a]</p></blockquote><p>b</p>
 // Since it would otherwise produces spans out of thin air on insertContent for example.
-const normalizeBlockSelectionRange = (rng: Range): Range => {
+const normalizeBlockSelectionRange = function (rng) {
   const startPos = CaretPosition.fromRangeStart(rng);
   const endPos = CaretPosition.fromRangeEnd(rng);
   const rootNode = rng.commonAncestorContainer;
@@ -41,7 +41,13 @@ const normalizeBlockSelectionRange = (rng: Range): Range => {
     }).getOr(rng);
 };
 
-const normalize = (rng: Range): Range => rng.collapsed ? rng : normalizeBlockSelectionRange(rng);
+const normalizeBlockSelection = function (rng) {
+  return rng.collapsed ? rng : normalizeBlockSelectionRange(rng);
+};
+
+const normalize = function (rng) {
+  return normalizeBlockSelection(rng);
+};
 
 export default {
   normalize

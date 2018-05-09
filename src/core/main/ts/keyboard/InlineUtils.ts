@@ -17,37 +17,36 @@ import * as CaretUtils from '../caret/CaretUtils';
 import DOMUtils from '../api/dom/DOMUtils';
 import NodeType from '../dom/NodeType';
 import * as Bidi from '../text/Bidi';
-import { Editor } from 'tinymce/core/api/Editor';
 
-const isInlineTarget = function (editor: Editor, elm: Node): boolean {
+const isInlineTarget = function (editor, elm) {
   const selector = EditorSettings.getString(editor, 'inline_boundaries_selector').getOr('a[href],code');
   return Selectors.is(Element.fromDom(elm), selector);
 };
 
-const isRtl = function (element: Node) {
+const isRtl = function (element) {
   return DOMUtils.DOM.getStyle(element, 'direction', true) === 'rtl' || Bidi.hasStrongRtl(element.textContent);
 };
 
-const findInlineParents = function (isInlineTarget: (node: Node) => boolean, rootNode: Node, pos: CaretPosition) {
+const findInlineParents = function (isInlineTarget, rootNode, pos) {
   return Arr.filter(DOMUtils.DOM.getParents(pos.container(), '*', rootNode), isInlineTarget);
 };
 
-const findRootInline = function (isInlineTarget: (node: Node) => boolean, rootNode: Node, pos: CaretPosition) {
+const findRootInline = function (isInlineTarget, rootNode, pos) {
   const parents = findInlineParents(isInlineTarget, rootNode, pos);
   return Option.from(parents[parents.length - 1]);
 };
 
-const hasSameParentBlock = function (rootNode: Node, node1: Node, node2: Node) {
+const hasSameParentBlock = function (rootNode, node1, node2) {
   const block1 = CaretUtils.getParentBlock(node1, rootNode);
   const block2 = CaretUtils.getParentBlock(node2, rootNode);
   return block1 && block1 === block2;
 };
 
-const isAtZwsp = function (pos: CaretPosition) {
+const isAtZwsp = function (pos) {
   return CaretContainer.isBeforeInline(pos) || CaretContainer.isAfterInline(pos);
 };
 
-const normalizePosition = function (forward: boolean, pos: CaretPosition) {
+const normalizePosition = function (forward, pos) {
   const container = pos.container(), offset = pos.offset();
 
   if (forward) {
@@ -73,10 +72,8 @@ const normalizePosition = function (forward: boolean, pos: CaretPosition) {
   }
 };
 
-type NormalisePostionFn = (pos: CaretPosition) => CaretPosition;
-
-const normalizeForwards = Fun.curry(normalizePosition, true) as NormalisePostionFn;
-const normalizeBackwards = Fun.curry(normalizePosition, false) as NormalisePostionFn;
+const normalizeForwards = Fun.curry(normalizePosition, true);
+const normalizeBackwards = Fun.curry(normalizePosition, false);
 
 export default {
   isInlineTarget,

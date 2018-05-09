@@ -37,15 +37,12 @@ const inListBlock = function (requiredState) {
   };
 };
 
-const inBlock = (blockName: string, requiredState: boolean) => {
+const inPreBlock = function (requiredState) {
   return function (editor, shiftKey) {
-    const state = NewLineUtils.getParentBlockName(editor) === blockName.toUpperCase();
-    return state === requiredState;
+    const inPre = NewLineUtils.getParentBlockName(editor) === 'PRE';
+    return inPre === requiredState;
   };
 };
-
-const inPreBlock = (requiredState: boolean) => inBlock('pre', requiredState);
-const inSummaryBlock = () => inBlock('summary', true);
 
 const shouldPutBrInPre = function (requiredState) {
   return function (editor, shiftKey) {
@@ -81,7 +78,6 @@ const match = function (predicates, action) {
 const getAction = function (editor, evt) {
   return LazyEvaluator.evaluateUntil([
     match([shouldBlockNewLine], newLineAction.none()),
-    match([inSummaryBlock()], newLineAction.br()),
     match([inPreBlock(true), shouldPutBrInPre(false), hasShiftKey], newLineAction.br()),
     match([inPreBlock(true), shouldPutBrInPre(false)], newLineAction.block()),
     match([inPreBlock(true), shouldPutBrInPre(true), hasShiftKey], newLineAction.block()),

@@ -15,7 +15,7 @@ import DeleteElement from './DeleteElement';
 import DeleteUtils from './DeleteUtils';
 import * as ElementType from '../dom/ElementType';
 import Parents from '../dom/Parents';
-import * as CaretFormat from '../fmt/CaretFormat';
+import CaretFormat from '../fmt/CaretFormat';
 
 const getParentInlines = function (rootElm, startElm) {
   const parents = Parents.parentsAndSelf(startElm, rootElm);

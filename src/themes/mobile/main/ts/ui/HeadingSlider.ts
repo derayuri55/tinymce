@@ -1,10 +1,9 @@
 import { Arr } from '@ephox/katamari';
 import { Compare, Element, Node, TransformFind } from '@ephox/sugar';
 
-import * as UiDomFactory from '../util/UiDomFactory';
+import UiDomFactory from '../util/UiDomFactory';
 import SizeSlider from './SizeSlider';
-import * as ToolbarWidgets from './ToolbarWidgets';
-import { Sketcher } from '@ephox/alloy';
+import ToolbarWidgets from './ToolbarWidgets';
 
 const headings = [ 'p', 'h3', 'h2', 'h1' ];
 
@@ -17,7 +16,7 @@ const makeSlider = function (spec) {
   });
 };
 
-const sketch = function (realm, editor): Sketcher.SketchSpec {
+const sketch = function (realm, editor) {
   const spec = {
     onChange (value) {
       editor.execCommand('FormatBlock', null, headings[value].toLowerCase());
@@ -43,6 +42,6 @@ const sketch = function (realm, editor): Sketcher.SketchSpec {
   });
 };
 
-export {
+export default {
   sketch
 };

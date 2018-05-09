@@ -9,38 +9,30 @@
  */
 
 import { Compare, Element } from '@ephox/sugar';
-import { Editor } from 'tinymce/core/api/Editor';
 
-const getBody = function (editor: Editor) {
+const getBody = function (editor) {
   return Element.fromDom(editor.getBody());
 };
-
-const getPixelWidth = (elm: HTMLElement) => elm.getBoundingClientRect().width;
-
-const getPixelHeight = (elm: HTMLElement) => elm.getBoundingClientRect().height;
-
-const getIsRoot = function (editor: Editor) {
+const getIsRoot = function (editor) {
   return function (element) {
     return Compare.eq(element, getBody(editor));
   };
 };
 
-const removePxSuffix = function (size: string) {
+const removePxSuffix = function (size) {
   return size ? size.replace(/px$/, '') : '';
 };
 
-const addSizeSuffix = function (size: string) {
+const addSizeSuffix = function (size) {
   if (/^[0-9]+$/.test(size)) {
     size += 'px';
   }
   return size;
 };
 
-export {
+export default {
   getBody,
   getIsRoot,
   addSizeSuffix,
-  removePxSuffix,
-  getPixelWidth,
-  getPixelHeight
+  removePxSuffix
 };

@@ -4,20 +4,19 @@ import { UnitTest } from '@ephox/bedrock';
 import { PlatformDetection } from '@ephox/sand';
 import { Body, Class } from '@ephox/sugar';
 
-import * as FontSizeSlider from 'tinymce/themes/mobile/ui/FontSizeSlider';
+import FontSizeSlider from 'tinymce/themes/mobile/ui/FontSizeSlider';
 import IosRealm from 'tinymce/themes/mobile/ui/IosRealm';
 
 import TestFrameEditor from '../../module/test/ui/TestFrameEditor';
 import TestSelectors from '../../module/test/ui/TestSelectors';
 import TestStyles from '../../module/test/ui/TestStyles';
-import { Fun } from '@ephox/katamari';
 
 UnitTest.asynctest('Browser Test: ui.FontSizeSliderTest', function () {
   const success = arguments[arguments.length - 2];
   const failure = arguments[arguments.length - 1];
   const detection = PlatformDetection.detect();
 
-  const realm = IosRealm(Fun.noop);
+  const realm = IosRealm();
   // Make toolbar appear
   Class.add(realm.system().element(), 'tinymce-mobile-fullscreen-maximized');
 
@@ -46,7 +45,6 @@ UnitTest.asynctest('Browser Test: ui.FontSizeSliderTest', function () {
 
   Pipeline.async({}, detection.browser.isChrome() ? [
     TestStyles.sWaitForToolstrip(realm),
-    tEditor.sWaitForEditorLoaded,
     Step.sync(function () {
       tEditor.editor().focus();
     }),

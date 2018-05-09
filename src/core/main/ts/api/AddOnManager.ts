@@ -11,7 +11,6 @@
 import { Arr } from '@ephox/katamari';
 import ScriptLoader from './dom/ScriptLoader';
 import Tools from './util/Tools';
-import { Editor } from 'tinymce/core/api/Editor';
 
 /**
  * This class handles the loading of themes/plugins or other add-ons and their language packs.
@@ -81,49 +80,49 @@ import { Editor } from 'tinymce/core/api/Editor';
 
 const each = Tools.each;
 
-export interface UrlObject { prefix: string; resource: string; suffix: string; }
+const AddOnManager: any = function () {
+  const self = this;
 
-export interface AddOnManager {
-  items: any[];
-  urls: Record<string, string>;
-  lookup: {};
-  _listeners: any[];
-  get: (name: string) => any;
-  dependencies: (name: string) => any;
-  requireLangPack: (name: string, languages: string) => void;
-  add: (id: string, addOn: (editor: Editor, url: string) => any, dependencies?: any) => (editor: Editor, url: string) => any;
-  remove: (name: string) => void;
-  createUrl: (baseUrl: UrlObject, dep: string | UrlObject) => UrlObject;
-  addComponents: (pluginName: string, scripts: string[]) => void;
-  load: (name: string, addOnUrl: string | UrlObject, success?: any, scope?: any, failure?: any) => void;
-  waitFor: (name: string, callback: Function) => void;
-}
+  self.items = [];
+  self.urls = {};
+  self.lookup = {};
+  self._listeners = [];
+};
 
-export function AddOnManager(): AddOnManager {
-  const items = [];
-  const urls: Record<string, string> = {};
-  const lookup = {};
-  let _listeners = [];
-
-  const get = (name: string) => {
-    if (lookup[name]) {
-      return lookup[name].instance;
+AddOnManager.prototype = {
+  /**
+   * Returns the specified add on by the short name.
+   *
+   * @method get
+   * @param {String} name Add-on to look for.
+   * @return {tinymce.Theme/tinymce.Plugin} Theme or plugin add-on instance or undefined.
+   */
+  get (name) {
+    if (this.lookup[name]) {
+      return this.lookup[name].instance;
     }
 
     return undefined;
-  };
+  },
 
-  const dependencies = (name: string) => {
+  dependencies (name) {
     let result;
 
-    if (lookup[name]) {
-      result = lookup[name].dependencies;
+    if (this.lookup[name]) {
+      result = this.lookup[name].dependencies;
     }
 
     return result || [];
-  };
+  },
 
-  const requireLangPack = (name: string, languages: string) => {
+  /**
+   * Loads a language pack for the specified add-on.
+   *
+   * @method requireLangPack
+   * @param {String} name Short name of the add-on.
+   * @param {String} languages Optional comma or space separated list of languages to check if it matches the name.
+   */
+  requireLangPack (name, languages) {
     let language = AddOnManager.language;
 
     if (language && AddOnManager.languageLoad !== false) {
@@ -138,192 +137,154 @@ export function AddOnManager(): AddOnManager {
         }
       }
 
-      ScriptLoader.ScriptLoader.add(urls[name] + '/langs/' + language + '.js');
+      ScriptLoader.ScriptLoader.add(this.urls[name] + '/langs/' + language + '.js');
     }
-  };
+  },
 
-  const add = (id: string, addOn: (editor: Editor, url: string) => any, dependencies?) => {
-    items.push(addOn);
-    lookup[id] = { instance: addOn, dependencies };
-    const result = Arr.partition(_listeners, function (listener) {
+  /**
+   * Adds a instance of the add-on by it's short name.
+   *
+   * @method add
+   * @param {String} id Short name/id for the add-on.
+   * @param {tinymce.Theme/tinymce.Plugin} addOn Theme or plugin to add.
+   * @return {tinymce.Theme/tinymce.Plugin} The same theme or plugin instance that got passed in.
+   * @example
+   * // Create a simple plugin
+   * tinymce.create('tinymce.plugins.TestPlugin', {
+   *   TestPlugin: function(ed, url) {
+   *   ed.on('click', function(e) {
+   *      ed.windowManager.alert('Hello World!');
+   *   });
+   *   }
+   * });
+   *
+   * // Register plugin using the add method
+   * tinymce.PluginManager.add('test', tinymce.plugins.TestPlugin);
+   *
+   * // Initialize TinyMCE
+   * tinymce.init({
+   *  ...
+   *  plugins: '-test' // Init the plugin but don't try to load it
+   * });
+   */
+  add (id, addOn, dependencies) {
+    this.items.push(addOn);
+    this.lookup[id] = { instance: addOn, dependencies };
+    const result = Arr.partition(this._listeners, function (listener) {
       return listener.name === id;
     });
 
-    _listeners = result.fail;
+    this._listeners = result.fail;
 
     each(result.pass, function (listener) {
       listener.callback();
     });
 
     return addOn;
-  };
+  },
 
-  const remove = (name: string) => {
-    delete urls[name];
-    delete lookup[name];
-  };
+  remove (name) {
+    delete this.urls[name];
+    delete this.lookup[name];
+  },
 
-  const createUrl = (baseUrl: string | UrlObject, dep: string | UrlObject): UrlObject => {
+  createUrl (baseUrl, dep) {
     if (typeof dep === 'object') {
       return dep;
     }
 
-    return typeof baseUrl === 'string' ?
-      { prefix: '', resource: dep, suffix: '' } :
-      { prefix: baseUrl.prefix, resource: dep, suffix: baseUrl.suffix };
-  };
+    return { prefix: baseUrl.prefix, resource: dep, suffix: baseUrl.suffix };
+  },
 
-  const addComponents = (pluginName: string, scripts: string[]) => {
+  /**
+   * Add a set of components that will make up the add-on. Using the url of the add-on name as the base url.
+   * This should be used in development mode.  A new compressor/javascript munger process will ensure that the
+   * components are put together into the plugin.js file and compressed correctly.
+   *
+   * @method addComponents
+   * @param {String} pluginName name of the plugin to load scripts from (will be used to get the base url for the plugins).
+   * @param {Array} scripts Array containing the names of the scripts to load.
+   */
+  addComponents (pluginName, scripts) {
     const pluginUrl = this.urls[pluginName];
 
     each(scripts, function (script) {
       ScriptLoader.ScriptLoader.add(pluginUrl + '/' + script);
     });
-  };
+  },
 
-  const loadDependencies = function (addOnUrl: string | UrlObject, success: Function, scope: any) {
-    const deps = dependencies(name);
+  /**
+   * Loads an add-on from a specific url.
+   *
+   * @method load
+   * @param {String} name Short name of the add-on that gets loaded.
+   * @param {String} addOnUrl URL to the add-on that will get loaded.
+   * @param {function} success Optional success callback to execute when an add-on is loaded.
+   * @param {Object} scope Optional scope to execute the callback in.
+   * @param {function} failure Optional failure callback to execute when an add-on failed to load.
+   * @example
+   * // Loads a plugin from an external URL
+   * tinymce.PluginManager.load('myplugin', '/some/dir/someplugin/plugin.js');
+   *
+   * // Initialize TinyMCE
+   * tinymce.init({
+   *  ...
+   *  plugins: '-myplugin' // Don't try to load it again
+   * });
+   */
+  load (name, addOnUrl, success, scope, failure) {
+    const self = this;
+    let url = addOnUrl;
 
-    each(deps, function (dep) {
-      const newUrl = createUrl(addOnUrl, dep);
+    const loadDependencies = function () {
+      const dependencies = self.dependencies(name);
 
-      load(newUrl.resource, newUrl, undefined, undefined);
-    });
+      each(dependencies, function (dep) {
+        const newUrl = self.createUrl(addOnUrl, dep);
 
-    if (success) {
-      if (scope) {
-        success.call(scope);
-      } else {
-        success.call(ScriptLoader);
+        self.load(newUrl.resource, newUrl, undefined, undefined);
+      });
+
+      if (success) {
+        if (scope) {
+          success.call(scope);
+        } else {
+          success.call(ScriptLoader);
+        }
       }
-    }
-  };
+    };
 
-  const load = (name: string, addOnUrl: string | UrlObject, success?: Function, scope?: any, failure?: Function) => {
-    if (urls[name]) {
+    if (self.urls[name]) {
       return;
     }
 
-    let urlString = typeof addOnUrl === 'string' ? addOnUrl : addOnUrl.prefix + addOnUrl.resource + addOnUrl.suffix;
-
-    if (urlString.indexOf('/') !== 0 && urlString.indexOf('://') === -1) {
-      urlString = AddOnManager.baseURL + '/' + urlString;
+    if (typeof addOnUrl === 'object') {
+      url = addOnUrl.prefix + addOnUrl.resource + addOnUrl.suffix;
     }
 
-    urls[name] = urlString.substring(0, urlString.lastIndexOf('/'));
+    if (url.indexOf('/') !== 0 && url.indexOf('://') === -1) {
+      url = AddOnManager.baseURL + '/' + url;
+    }
 
-    if (lookup[name]) {
-      loadDependencies(addOnUrl, success, scope);
+    self.urls[name] = url.substring(0, url.lastIndexOf('/'));
+
+    if (self.lookup[name]) {
+      loadDependencies();
     } else {
-      ScriptLoader.ScriptLoader.add(urlString, () => loadDependencies(addOnUrl, success, scope), scope, failure);
+      ScriptLoader.ScriptLoader.add(url, loadDependencies, scope, failure);
     }
-  };
+  },
 
-  const waitFor = (name: string, callback: Function) => {
-    if (lookup.hasOwnProperty(name)) {
+  waitFor (name, callback) {
+    if (this.lookup.hasOwnProperty(name)) {
       callback();
     } else {
-      _listeners.push({ name, callback });
+      this._listeners.push({ name, callback });
     }
-  };
+  }
+};
 
-  return {
-    items,
-    urls,
-    lookup,
-    _listeners,
-    /**
-     * Returns the specified add on by the short name.
-     *
-     * @method get
-     * @param {String} name Add-on to look for.
-     * @return {tinymce.Theme/tinymce.Plugin} Theme or plugin add-on instance or undefined.
-     */
-    get,
+AddOnManager.PluginManager = new AddOnManager();
+AddOnManager.ThemeManager = new AddOnManager();
 
-    dependencies,
-
-    /**
-     * Loads a language pack for the specified add-on.
-     *
-     * @method requireLangPack
-     * @param {String} name Short name of the add-on.
-     * @param {String} languages Optional comma or space separated list of languages to check if it matches the name.
-     */
-    requireLangPack,
-
-    /**
-     * Adds a instance of the add-on by it's short name.
-     *
-     * @method add
-     * @param {String} id Short name/id for the add-on.
-     * @param {tinymce.Theme/tinymce.Plugin} addOn Theme or plugin to add.
-     * @return {tinymce.Theme/tinymce.Plugin} The same theme or plugin instance that got passed in.
-     * @example
-     * // Create a simple plugin
-     * tinymce.create('tinymce.plugins.TestPlugin', {
-     *   TestPlugin: function(ed, url) {
-     *   ed.on('click', function(e) {
-     *      ed.windowManager.alert('Hello World!');
-     *   });
-     *   }
-     * });
-     *
-     * // Register plugin using the add method
-     * tinymce.PluginManager.add('test', tinymce.plugins.TestPlugin);
-     *
-     * // Initialize TinyMCE
-     * tinymce.init({
-     *  ...
-     *  plugins: '-test' // Init the plugin but don't try to load it
-     * });
-     */
-    add,
-
-    remove,
-
-    createUrl,
-
-    /**
-     * Add a set of components that will make up the add-on. Using the url of the add-on name as the base url.
-     * This should be used in development mode.  A new compressor/javascript munger process will ensure that the
-     * components are put together into the plugin.js file and compressed correctly.
-     *
-     * @method addComponents
-     * @param {String} pluginName name of the plugin to load scripts from (will be used to get the base url for the plugins).
-     * @param {Array} scripts Array containing the names of the scripts to load.
-     */
-    addComponents,
-
-    /**
-     * Loads an add-on from a specific url.
-     *
-     * @method load
-     * @param {String} name Short name of the add-on that gets loaded.
-     * @param {String} addOnUrl URL to the add-on that will get loaded.
-     * @param {function} success Optional success callback to execute when an add-on is loaded.
-     * @param {Object} scope Optional scope to execute the callback in.
-     * @param {function} failure Optional failure callback to execute when an add-on failed to load.
-     * @example
-     * // Loads a plugin from an external URL
-     * tinymce.PluginManager.load('myplugin', '/some/dir/someplugin/plugin.js');
-     *
-     * // Initialize TinyMCE
-     * tinymce.init({
-     *  ...
-     *  plugins: '-myplugin' // Don't try to load it again
-     * });
-     */
-    load,
-
-    waitFor
-  };
-}
-
-export namespace AddOnManager {
-  export let language;
-  export let languageLoad;
-  export let baseURL;
-  export const PluginManager = AddOnManager();
-  export const ThemeManager = AddOnManager();
-}
+export default AddOnManager;

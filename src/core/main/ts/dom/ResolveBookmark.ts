@@ -10,18 +10,13 @@
 
 import { Option, Options } from '@ephox/katamari';
 import Env from '../api/Env';
-import * as CaretBookmark from './CaretBookmark';
+import * as CaretBookmark from '../caret/CaretBookmark';
 import CaretPosition from '../caret/CaretPosition';
-import NodeType from '../dom/NodeType';
+import NodeType from './NodeType';
 import Tools from '../api/util/Tools';
 import { Selection } from '../api/dom/Selection';
-import { getParentCaretContainer } from 'tinymce/core/fmt/FormatContainer';
-import Zwsp from 'tinymce/core/text/Zwsp';
-import { DOMUtils } from 'tinymce/core/api/dom/DOMUtils';
-import CaretFinder from 'tinymce/core/caret/CaretFinder';
-import { isPathBookmark, isStringPathBookmark, isIdBookmark, isIndexBookmark, isRangeBookmark, PathBookmark, IdBookmark, Bookmark, IndexBookmark } from './BookmarkTypes';
 
-const addBogus = (dom: DOMUtils, node: HTMLElement) => {
+const addBogus = function (dom, node) {
   // Adds a bogus BR element for empty block elements
   if (dom.isBlock(node) && !node.innerHTML && !Env.ie) {
     node.innerHTML = '<br data-mce-bogus="1" />';
@@ -30,7 +25,7 @@ const addBogus = (dom: DOMUtils, node: HTMLElement) => {
   return node;
 };
 
-const resolveCaretPositionBookmark = (dom: DOMUtils, bookmark) => {
+const resolveCaretPositionBookmark = function (dom, bookmark) {
   let rng, pos;
 
   rng = dom.createRng();
@@ -43,38 +38,7 @@ const resolveCaretPositionBookmark = (dom: DOMUtils, bookmark) => {
   return rng;
 };
 
-const insertZwsp = (node: Node, rng: Range) => {
-  const textNode = node.ownerDocument.createTextNode(Zwsp.ZWSP);
-  node.appendChild(textNode);
-  rng.setStart(textNode, 0);
-  rng.setEnd(textNode, 0);
-};
-
-const isEmpty = (node: Node) => node.hasChildNodes() === false;
-
-const tryFindRangePosition = (node: Element, rng: Range) => {
-  return CaretFinder.lastPositionIn(node).fold(
-    () => false,
-    (pos) => {
-      rng.setStart(pos.container(), pos.offset());
-      rng.setEnd(pos.container(), pos.offset());
-      return true;
-    }
-  );
-};
-
-// Since we trim zwsp from undo levels the caret format containers
-// may be empty if so pad them with a zwsp and move caret there
-const padEmptyCaretContainer = (root: HTMLElement, node: Node, rng: Range): boolean => {
-  if (isEmpty(node) && getParentCaretContainer(root, node)) {
-    insertZwsp(node, rng);
-    return true;
-  } else {
-    return false;
-  }
-};
-
-const setEndPoint = (dom: DOMUtils, start: boolean, bookmark: PathBookmark, rng: Range) => {
+const setEndPoint = function (dom, start, bookmark, rng) {
   const point = bookmark[start ? 'start' : 'end'];
   let i, node, offset, children;
   const root = dom.getRoot();
@@ -86,16 +50,8 @@ const setEndPoint = (dom: DOMUtils, start: boolean, bookmark: PathBookmark, rng:
     for (node = root, i = point.length - 1; i >= 1; i--) {
       children = node.childNodes;
 
-      if (padEmptyCaretContainer(root, node, rng)) {
-        return true;
-      }
-
       if (point[i] > children.length - 1) {
-        if (padEmptyCaretContainer(root, node, rng)) {
-          return true;
-        }
-
-        return tryFindRangePosition(node, rng);
+        return;
       }
 
       node = children[point[i]];
@@ -122,9 +78,7 @@ const setEndPoint = (dom: DOMUtils, start: boolean, bookmark: PathBookmark, rng:
   return true;
 };
 
-const isValidTextNode = (node: Node): node is Text => NodeType.isText(node) && node.data.length > 0;
-
-const restoreEndPoint = (dom: DOMUtils, suffix: string, bookmark: IdBookmark) => {
+const restoreEndPoint = function (dom, suffix, bookmark) {
   let marker = dom.get(bookmark.id + '_' + suffix), node, idx, next, prev;
   const keep = bookmark.keep;
   let container, offset;
@@ -136,19 +90,8 @@ const restoreEndPoint = (dom: DOMUtils, suffix: string, bookmark: IdBookmark) =>
       if (!keep) {
         idx = dom.nodeIndex(marker);
       } else {
-        if (marker.hasChildNodes()) {
-          node = marker.firstChild;
-          idx = 1;
-        } else if (isValidTextNode(marker.nextSibling)) {
-          node = marker.nextSibling;
-          idx = 0;
-        } else if (isValidTextNode(marker.previousSibling)) {
-          node = marker.previousSibling;
-          idx = marker.previousSibling.data.length;
-        } else {
-          node = marker.parentNode;
-          idx = dom.nodeIndex(marker) + 1;
-        }
+        node = marker.firstChild;
+        idx = 1;
       }
 
       container = node;
@@ -157,16 +100,8 @@ const restoreEndPoint = (dom: DOMUtils, suffix: string, bookmark: IdBookmark) =>
       if (!keep) {
         idx = dom.nodeIndex(marker);
       } else {
-        if (marker.hasChildNodes()) {
-          node = marker.firstChild;
-          idx = 1;
-        } else if (isValidTextNode(marker.previousSibling)) {
-          node = marker.previousSibling;
-          idx = marker.previousSibling.data.length;
-        } else {
-          node = marker.parentNode;
-          idx = dom.nodeIndex(marker);
-        }
+        node = marker.firstChild;
+        idx = 1;
       }
 
       container = node;
@@ -178,7 +113,7 @@ const restoreEndPoint = (dom: DOMUtils, suffix: string, bookmark: IdBookmark) =>
       next = marker.nextSibling;
 
       // Remove all marker text nodes
-      Tools.each(Tools.grep(marker.childNodes), (node) => {
+      Tools.each(Tools.grep(marker.childNodes), function (node) {
         if (NodeType.isText(node)) {
           node.nodeValue = node.nodeValue.replace(/\uFEFF/g, '');
         }
@@ -188,7 +123,7 @@ const restoreEndPoint = (dom: DOMUtils, suffix: string, bookmark: IdBookmark) =>
       // Also remove duplicated instances of the marker for example by a
       // split operation or by WebKit auto split on paste feature
       while ((marker = dom.get(bookmark.id + '_' + suffix))) {
-        dom.remove(marker, true);
+        dom.remove(marker, 1);
       }
 
       // If siblings are text nodes then merge them unless it's Opera since it some how removes the node
@@ -215,9 +150,11 @@ const restoreEndPoint = (dom: DOMUtils, suffix: string, bookmark: IdBookmark) =>
   }
 };
 
-const alt = <A>(o1: Option<A>, o2: Option<A>): Option<A> => o1.isSome() ? o1 : o2;
+const alt = function (o1, o2) {
+  return o1.isSome() ? o1 : o2;
+};
 
-const resolvePaths = (dom: DOMUtils, bookmark: PathBookmark): Option<Range> => {
+const resolvePaths = function (dom, bookmark) {
   const rng = dom.createRng();
 
   if (setEndPoint(dom, true, bookmark, rng) && setEndPoint(dom, false, bookmark, rng)) {
@@ -227,14 +164,14 @@ const resolvePaths = (dom: DOMUtils, bookmark: PathBookmark): Option<Range> => {
   }
 };
 
-const resolveId = (dom: DOMUtils, bookmark: IdBookmark) => {
+const resolveId = function (dom, bookmark) {
   const startPos = restoreEndPoint(dom, 'start', bookmark);
   const endPos = restoreEndPoint(dom, 'end', bookmark);
 
   return Options.liftN([
     startPos,
     alt(endPos, startPos)
-  ], (spos, epos) => {
+  ], function (spos, epos) {
     const rng = dom.createRng();
     rng.setStart(addBogus(dom, spos.container()), spos.offset());
     rng.setEnd(addBogus(dom, epos.container()), epos.offset());
@@ -242,27 +179,27 @@ const resolveId = (dom: DOMUtils, bookmark: IdBookmark) => {
   });
 };
 
-const resolveIndex = (dom: DOMUtils, bookmark: IndexBookmark) => {
-  return Option.from(dom.select(bookmark.name)[bookmark.index]).map((elm) => {
+const resolveIndex = function (dom, bookmark) {
+  return Option.from(dom.select(bookmark.name)[bookmark.index]).map(function (elm) {
     const rng = dom.createRng();
     rng.selectNode(elm);
     return rng;
   });
 };
 
-const resolve = (selection: Selection, bookmark: Bookmark): Option<Range> => {
+const resolve = function (selection: Selection, bookmark) {
   const dom = selection.dom;
 
   if (bookmark) {
-    if (isPathBookmark(bookmark)) {
+    if (Tools.isArray(bookmark.start)) {
       return resolvePaths(dom, bookmark);
-    } else if (isStringPathBookmark(bookmark)) {
+    } else if (typeof bookmark.start === 'string') {
       return Option.some(resolveCaretPositionBookmark(dom, bookmark));
-    } else if (isIdBookmark(bookmark)) {
+    } else if (bookmark.id) {
       return resolveId(dom, bookmark);
-    } else if (isIndexBookmark(bookmark)) {
+    } else if (bookmark.name) {
       return resolveIndex(dom, bookmark);
-    } else if (isRangeBookmark(bookmark)) {
+    } else if (bookmark.rng) {
       return Option.some(bookmark.rng);
     }
   }

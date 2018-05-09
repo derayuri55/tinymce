@@ -26,7 +26,7 @@ const traverse = function (json, path) {
   return isValue(value) ? value : null;
 };
 
-const requestUrlAsBlob = function (url: string, headers: Record<string, string>, withCredentials: boolean) {
+const requestUrlAsBlob = function (url, headers) {
   return new Promise<{status: number, blob: Blob}>(function (resolve) {
     let xhr;
 
@@ -42,8 +42,6 @@ const requestUrlAsBlob = function (url: string, headers: Record<string, string>,
     };
 
     xhr.open('GET', url, true);
-
-    xhr.withCredentials = withCredentials;
 
     Tools.each(headers, function (value, key) {
       xhr.setRequestHeader(key, value);

@@ -10,21 +10,20 @@
 
 import PluginManager from 'tinymce/core/api/PluginManager';
 import Clipboard from './actions/Clipboard';
-import { TableActions } from './actions/TableActions';
+import TableActions from './actions/TableActions';
 import Commands from './api/Commands';
-import { ResizeHandler } from './actions/ResizeHandler';
+import ResizeHandler from './actions/ResizeHandler';
 import TabContext from './queries/TabContext';
 import CellSelection from './selection/CellSelection';
 import Ephemera from './selection/Ephemera';
-import { Selections } from './selection/Selections';
+import Selections from './selection/Selections';
 import Buttons from './ui/Buttons';
 import MenuItems from './ui/MenuItems';
 import { hasTabNavigation } from './api/Settings';
 import { getApi } from './api/Api';
 import { Cell, Option } from '@ephox/katamari';
-import { Editor } from 'tinymce/core/api/Editor';
 
-function Plugin(editor: Editor) {
+function Plugin(editor) {
   const resizeHandler = ResizeHandler(editor);
   const cellSelection = CellSelection(editor, resizeHandler.lazyResize);
   const actions = TableActions(editor, resizeHandler.lazyWire);
@@ -44,7 +43,7 @@ function Plugin(editor: Editor) {
   });
 
   if (hasTabNavigation(editor)) {
-    editor.on('keydown', function (e: KeyboardEvent) {
+    editor.on('keydown', function (e) {
       TabContext.handle(e, editor, actions, resizeHandler.lazyWire);
     });
   }

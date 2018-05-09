@@ -1,7 +1,6 @@
 import Buttons from './Buttons';
-import { Sketcher } from '@ephox/alloy';
 
-const button = function (realm, clazz, makeItems): Sketcher.SketchSpec {
+const button = function (realm, clazz, makeItems) {
   return Buttons.forToolbar(clazz, function () {
     const items = makeItems();
     realm.setContextToolbar([
@@ -14,6 +13,6 @@ const button = function (realm, clazz, makeItems): Sketcher.SketchSpec {
   }, { });
 };
 
-export {
+export default {
   button
 };

@@ -8,17 +8,16 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Arr, Option } from '@ephox/katamari';
+import { Arr, Fun, Option } from '@ephox/katamari';
 import { TableLookup } from '@ephox/snooker';
 import { Element } from '@ephox/sugar';
 
 import InsertTable from '../actions/InsertTable';
 import TableTargets from '../queries/TableTargets';
+import TableDialog from './TableDialog';
 import { hasTableGrid } from '../api/Settings';
-import { Editor } from 'tinymce/core/api/Editor';
-import { Selections } from 'tinymce/plugins/table/selection/Selections';
 
-const addMenuItems = function (editor: Editor, selections: Selections) {
+const addMenuItems = function (editor, selections) {
   let targets = Option.none();
 
   const tableCtrls = [];
@@ -161,7 +160,7 @@ const addMenuItems = function (editor: Editor, selections: Selections) {
     text: 'Table',
     icon: 'table',
     context: 'table',
-    onclick: cmd('mceInsertTable')
+    onclick: Fun.curry(TableDialog.open, editor)
   } : {
     text: 'Table',
     icon: 'table',
@@ -171,7 +170,7 @@ const addMenuItems = function (editor: Editor, selections: Selections) {
       if (e.aria) {
         this.parent().hideAll();
         e.stopImmediatePropagation();
-        editor.execCommand('mceInsertTable');
+        TableDialog.open(editor);
       }
     },
     onshow () {
@@ -241,7 +240,7 @@ const addMenuItems = function (editor: Editor, selections: Selections) {
     text: 'Table properties',
     context: 'table',
     onPostRender: pushTable,
-    onclick: cmd('mceTableProps')
+    onclick: Fun.curry(TableDialog.open, editor, true)
   };
 
   const deleteTable = {

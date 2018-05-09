@@ -11,14 +11,13 @@
 import GetBookmark from './GetBookmark';
 import ResolveBookmark from './ResolveBookmark';
 import { Selection } from '../api/dom/Selection';
-import NodeType from '../dom/NodeType';
-import { Bookmark } from './BookmarkTypes';
+import NodeType from './NodeType';
 
-const getBookmark = function (selection: Selection, type: number, normalized: boolean): Bookmark {
+const getBookmark = function (selection: Selection, type, normalized) {
   return GetBookmark.getBookmark(selection, type, normalized);
 };
 
-const moveToBookmark = function (selection: Selection, bookmark: Bookmark) {
+const moveToBookmark = function (selection: Selection, bookmark) {
   ResolveBookmark.resolve(selection, bookmark).each(function (rng) {
     selection.setRng(rng);
   });

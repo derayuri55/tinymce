@@ -162,7 +162,7 @@ UnitTest.asynctest('browser.tinymce.plugins.table.TableDialogTest', function () 
                 borderColor: '',
                 borderStyle: '',
                 style: '',
-                class: 'class1'
+                class: ''
               })
             ]),
             Chain.fromChains([

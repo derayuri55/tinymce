@@ -9,7 +9,7 @@
  */
 
 import Tools from 'tinymce/core/api/util/Tools';
-import * as FormatUtils from './FormatUtils';
+import FormatUtils from './FormatUtils';
 
 const defaultBlocks = (
   'Paragraph=p;' +

@@ -9,14 +9,12 @@
  */
 
 import Tools from 'tinymce/core/api/util/Tools';
-import { Editor } from 'tinymce/core/api/Editor';
-import { DOMUtils } from 'tinymce/core/api/dom/DOMUtils';
 
-const getTDTHOverallStyle = function (dom: DOMUtils, elm: Element, name: string): string {
+const getTDTHOverallStyle = function (dom, elm, name) {
   const cells = dom.select('td,th', elm);
-  let firstChildStyle: string;
+  let firstChildStyle;
 
-  const checkChildren = function (firstChildStyle: string, elms: Element[]) {
+  const checkChildren = function (firstChildStyle, elms) {
     for (let i = 0; i < elms.length; i++) {
       const currentStyle = dom.getStyle(elms[i], name);
       if (typeof firstChildStyle === 'undefined') {
@@ -33,25 +31,25 @@ const getTDTHOverallStyle = function (dom: DOMUtils, elm: Element, name: string)
   return firstChildStyle;
 };
 
-const applyAlign = function (editor: Editor, elm: Element, name: string) {
+const applyAlign = function (editor, elm, name) {
   if (name) {
     editor.formatter.apply('align' + name, {}, elm);
   }
 };
 
-const applyVAlign = function (editor: Editor, elm: Element, name: string) {
+const applyVAlign = function (editor, elm, name) {
   if (name) {
     editor.formatter.apply('valign' + name, {}, elm);
   }
 };
 
-const unApplyAlign = function (editor: Editor, elm: Element) {
+const unApplyAlign = function (editor, elm) {
   Tools.each('left center right'.split(' '), function (name) {
     editor.formatter.remove('align' + name, {}, elm);
   });
 };
 
-const unApplyVAlign = function (editor: Editor, elm: Element) {
+const unApplyVAlign = function (editor, elm) {
   Tools.each('top middle bottom'.split(' '), function (name) {
     editor.formatter.remove('valign' + name, {}, elm);
   });

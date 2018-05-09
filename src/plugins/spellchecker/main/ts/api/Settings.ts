@@ -7,27 +7,26 @@
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
  */
-import { Editor } from 'tinymce/core/api/Editor';
 
-const getLanguages = function (editor: Editor) {
+const getLanguages = function (editor) {
   const defaultLanguages = 'English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr_FR,German=de,Italian=it,Polish=pl,Portuguese=pt_BR,Spanish=es,Swedish=sv';
   return editor.getParam('spellchecker_languages', defaultLanguages);
 };
 
-const getLanguage = function (editor: Editor) {
+const getLanguage = function (editor) {
   const defaultLanguage = editor.getParam('language', 'en');
   return editor.getParam('spellchecker_language', defaultLanguage);
 };
 
-const getRpcUrl = function (editor: Editor) {
+const getRpcUrl = function (editor) {
   return editor.getParam('spellchecker_rpc_url');
 };
 
-const getSpellcheckerCallback = function (editor: Editor) {
+const getSpellcheckerCallback = function (editor) {
   return editor.getParam('spellchecker_callback');
 };
 
-const getSpellcheckerWordcharPattern = function (editor: Editor) {
+const getSpellcheckerWordcharPattern = function (editor) {
   const defaultPattern = new RegExp('[^' +
   '\\s!"#$%&()*+,-./:;<=>?@[\\]^_{|}`' +
   '\u00a7\u00a9\u00ab\u00ae\u00b1\u00b6\u00b7\u00b8\u00bb' +

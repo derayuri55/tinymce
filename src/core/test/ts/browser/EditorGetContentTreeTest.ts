@@ -4,7 +4,10 @@ import Serializer from 'tinymce/core/api/html/Serializer';
 import Theme from 'tinymce/themes/modern/Theme';
 import { UnitTest } from '@ephox/bedrock';
 
-UnitTest.asynctest('browser.tinymce.core.content.EditorGetContentTreeTest', (success, failure) => {
+UnitTest.asynctest('browser.tinymce.core.EditorGetContentTreeTest', function () {
+  const success = arguments[arguments.length - 2];
+  const failure = arguments[arguments.length - 1];
+
   Theme();
 
   const toHtml = function (node) {

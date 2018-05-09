@@ -1,25 +1,11 @@
 import {
-  AddEventsBehaviour,
-  AlloyEvents,
-  AlloyTriggers,
-  Behaviour,
-  Button,
-  Composing,
-  Container,
-  DataField,
-  Input,
-  Keying,
-  Memento,
-  NativeEvents,
-  Representing,
-  Sketcher,
-  Tabstopping,
-  Toggling,
+    AddEventsBehaviour, AlloyEvents, AlloyTriggers, Behaviour, Button, Composing, Container,
+    DataField, Input, Keying, Memento, NativeEvents, Representing, Tabstopping, Toggling
 } from '@ephox/alloy';
 import { Option } from '@ephox/katamari';
 
 import Styles from '../style/Styles';
-import * as UiDomFactory from '../util/UiDomFactory';
+import UiDomFactory from '../util/UiDomFactory';
 
 const clearInputBehaviour = 'input-clearing';
 
@@ -97,11 +83,11 @@ const hidden = function (name) {
       getInitialValue () {
         return Option.none();
       }
-    }) as Sketcher.SketchSpec
+    })
   };
 };
 
-export {
+export default {
   field,
   hidden
 };

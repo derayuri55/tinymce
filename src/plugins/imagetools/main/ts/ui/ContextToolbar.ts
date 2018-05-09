@@ -9,7 +9,7 @@
  */
 
 import { Fun } from '@ephox/katamari';
-import * as Settings from '../api/Settings';
+import Settings from '../api/Settings';
 import Actions from '../core/Actions';
 
 const register = function (editor) {

@@ -173,7 +173,7 @@ export default {
    */
   ceFalse: (ie === false || ie > 8),
 
-  cacheSuffix: null,
+  cacheSuffix: '',
   container: null,
   overrideViewPort: null,
   experimentalShadowDom: false,

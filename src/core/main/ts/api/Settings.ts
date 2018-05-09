@@ -8,10 +8,7 @@
  * Contributing: http://www.tinymce.com/contributing
  */
 
-import { Editor } from 'tinymce/core/api/Editor';
-import Tools from 'tinymce/core/api/util/Tools';
-
-const getBodySetting = (editor: Editor, name: string, defaultValue: string) => {
+const getBodySetting = function (editor, name, defaultValue) {
   const value = editor.getParam(name, defaultValue);
 
   if (value.indexOf('=') !== -1) {
@@ -22,35 +19,35 @@ const getBodySetting = (editor: Editor, name: string, defaultValue: string) => {
   }
 };
 
-const getIframeAttrs = (editor: Editor): Record<string, string> => {
+const getIframeAttrs = function (editor) {
   return editor.getParam('iframe_attrs', {});
 };
 
-const getDocType = (editor: Editor): string => {
+const getDocType = function (editor) {
   return editor.getParam('doctype', '<!DOCTYPE html>');
 };
 
-const getDocumentBaseUrl = (editor: Editor): string => {
+const getDocumentBaseUrl = function (editor) {
   return editor.getParam('document_base_url', '');
 };
 
-const getBodyId = (editor: Editor): string => {
+const getBodyId = function (editor) {
   return getBodySetting(editor, 'body_id', 'tinymce');
 };
 
-const getBodyClass = (editor: Editor): string => {
+const getBodyClass = function (editor) {
   return getBodySetting(editor, 'body_class', '');
 };
 
-const getContentSecurityPolicy = (editor: Editor): string => {
+const getContentSecurityPolicy = function (editor) {
   return editor.getParam('content_security_policy', '');
 };
 
-const shouldPutBrInPre = (editor: Editor): boolean => {
+const shouldPutBrInPre = function (editor) {
   return editor.getParam('br_in_pre', true);
 };
 
-const getForcedRootBlock = (editor: Editor): string => {
+const getForcedRootBlock = function (editor) {
   // Legacy option
   if (editor.getParam('force_p_newlines', false)) {
     return 'p';
@@ -60,28 +57,25 @@ const getForcedRootBlock = (editor: Editor): string => {
   return block === false ? '' : block;
 };
 
-const getForcedRootBlockAttrs = (editor: Editor): Record<string, string> => {
+const getForcedRootBlockAttrs = function (editor) {
   return editor.getParam('forced_root_block_attrs', {});
 };
 
-const getBrNewLineSelector = (editor: Editor): string => {
+const getBrNewLineSelector = function (editor) {
   return editor.getParam('br_newline_selector', '.mce-toc h2,figcaption,caption');
 };
 
-const getNoNewLineSelector = (editor: Editor): string => {
+const getNoNewLineSelector = function (editor) {
   return editor.getParam('no_newline_selector', '');
 };
 
-const shouldKeepStyles = (editor: Editor): boolean => {
+const shouldKeepStyles = function (editor) {
   return editor.getParam('keep_styles', true);
 };
 
-const shouldEndContainerOnEmptyBlock = (editor: Editor): boolean => {
+const shouldEndContainerOnEmtpyBlock = function (editor) {
   return editor.getParam('end_container_on_empty_block', false);
 };
-
-const getFontStyleValues = (editor: Editor): string[] => Tools.explode(editor.getParam('font_size_style_values', ''));
-const getFontSizeClasses = (editor: Editor): string[] => Tools.explode(editor.getParam('font_size_classes', ''));
 
 export default {
   getIframeAttrs,
@@ -96,7 +90,5 @@ export default {
   getBrNewLineSelector,
   getNoNewLineSelector,
   shouldKeepStyles,
-  shouldEndContainerOnEmptyBlock,
-  getFontStyleValues,
-  getFontSizeClasses
+  shouldEndContainerOnEmtpyBlock
 };

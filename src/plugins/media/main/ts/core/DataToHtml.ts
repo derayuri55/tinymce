@@ -13,7 +13,7 @@ import Settings from '../api/Settings';
 import HtmlToData from './HtmlToData';
 import Mime from './Mime';
 import UpdateHtml from './UpdateHtml';
-import * as UrlPatterns from './UrlPatterns';
+import UrlPatterns from './UrlPatterns';
 import VideoScript from './VideoScript';
 
 const getIframeHtml = function (data) {
@@ -94,15 +94,30 @@ const dataToHtml = function (editor, dataIn) {
   data.source2mime = Mime.guess(data.source2);
   data.poster = editor.convertURL(data.poster, 'poster');
 
-  const pattern = UrlPatterns.matchPattern(data.source1);
+  Tools.each(UrlPatterns.urlPatterns, function (pattern) {
+    let i;
+    let url;
 
-  if (pattern) {
-    data.source1 = pattern.url;
-    data.type = pattern.type;
-    data.allowFullscreen = pattern.allowFullscreen;
-    data.width = data.width || pattern.w;
-    data.height = data.height || pattern.h;
-  }
+    const match = pattern.regex.exec(data.source1);
+
+    if (match) {
+      url = pattern.url;
+
+      for (i = 0; match[i]; i++) {
+        /*jshint loopfunc:true*/
+        /*eslint no-loop-func:0 */
+        url = url.replace('$' + i, function () {
+          return match[i];
+        });
+      }
+
+      data.source1 = url;
+      data.type = pattern.type;
+      data.allowFullscreen = pattern.allowFullscreen;
+      data.width = data.width || pattern.w;
+      data.height = data.height || pattern.h;
+    }
+  });
 
   if (data.embed) {
     return UpdateHtml.updateHtml(data.embed, data, true);

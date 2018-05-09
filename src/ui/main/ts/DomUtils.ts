@@ -11,7 +11,6 @@
 import DOMUtils from 'tinymce/core/api/dom/DOMUtils';
 import Env from 'tinymce/core/api/Env';
 import Tools from 'tinymce/core/api/util/Tools';
-import { GeomRect } from 'tinymce/core/api/geom/Rect';
 
 /**
  * Private UI DomUtils proxy.
@@ -49,7 +48,7 @@ const funcs = {
     return DOMUtils.DOM.createFragment(html);
   },
 
-  getWindowSize (): GeomRect {
+  getWindowSize () {
     return DOMUtils.DOM.getViewPort();
   },
 

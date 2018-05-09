@@ -9,21 +9,18 @@
  */
 
 import Settings from './Settings';
-import Actions, { LastSuggestion } from '../core/Actions';
-import { Editor } from 'tinymce/core/api/Editor';
-import { Cell } from '@ephox/katamari';
-import { DomTextMatcher } from 'tinymce/plugins/spellchecker/core/DomTextMatcher';
+import Actions from '../core/Actions';
 
-const get = function (editor: Editor, startedState: Cell<boolean>, lastSuggestionsState: Cell<LastSuggestion>, textMatcherState: Cell<DomTextMatcher>, currentLanguageState: Cell<string>, url: string) {
+const get = function (editor, startedState, lastSuggestionsState, textMatcherState, url) {
   const getLanguage = function () {
-    return currentLanguageState.get();
+    return Settings.getLanguage(editor);
   };
 
   const getWordCharPattern = function () {
     return Settings.getSpellcheckerWordcharPattern(editor);
   };
 
-  const markErrors = function (data: string) {
+  const markErrors = function (data) {
     Actions.markErrors(editor, startedState, textMatcherState, lastSuggestionsState, data);
   };
 

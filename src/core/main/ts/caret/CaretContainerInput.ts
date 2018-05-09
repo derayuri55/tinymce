@@ -11,23 +11,22 @@
 import { Fun } from '@ephox/katamari';
 import { Element, SelectorFind } from '@ephox/sugar';
 import * as CaretContainer from './CaretContainer';
-import { Editor } from 'tinymce/core/api/Editor';
 
 /**
  * This module shows the invisble block that the caret is currently in when contents is added to that block.
  */
 
-const findBlockCaretContainer = function (editor: Editor) {
+const findBlockCaretContainer = function (editor) {
   return SelectorFind.descendant(Element.fromDom(editor.getBody()), '*[data-mce-caret]').fold(Fun.constant(null), function (elm) {
     return elm.dom();
   });
 };
 
-const removeIeControlRect = function (editor: Editor) {
+const removeIeControlRect = function (editor) {
   editor.selection.setRng(editor.selection.getRng());
 };
 
-const showBlockCaretContainer = function (editor: Editor, blockCaretContainer: HTMLElement) {
+const showBlockCaretContainer = function (editor, blockCaretContainer) {
   if (blockCaretContainer.hasAttribute('data-mce-caret')) {
     CaretContainer.showCaretContainerBlock(blockCaretContainer);
     removeIeControlRect(editor);
@@ -35,7 +34,7 @@ const showBlockCaretContainer = function (editor: Editor, blockCaretContainer: H
   }
 };
 
-const handleBlockContainer = function (editor: Editor, e: Event) {
+const handleBlockContainer = function (editor, e) {
   const blockCaretContainer = findBlockCaretContainer(editor);
 
   if (!blockCaretContainer) {
@@ -51,11 +50,10 @@ const handleBlockContainer = function (editor: Editor, e: Event) {
 
   if (CaretContainer.hasContent(blockCaretContainer)) {
     showBlockCaretContainer(editor, blockCaretContainer);
-    editor.undoManager.add();
   }
 };
 
-const setup = function (editor: Editor) {
+const setup = function (editor) {
   editor.on('keyup compositionstart', Fun.curry(handleBlockContainer, editor));
 };
 

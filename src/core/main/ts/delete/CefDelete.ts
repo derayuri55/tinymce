@@ -15,7 +15,6 @@ import * as CefDeleteAction from './CefDeleteAction';
 import DeleteElement from './DeleteElement';
 import DeleteUtils from './DeleteUtils';
 import NodeType from '../dom/NodeType';
-import { Editor } from 'tinymce/core/api/Editor';
 
 const deleteElement = function (editor, forward) {
   return function (element) {
@@ -80,7 +79,7 @@ const getContentEditableRoot = function (root, node) {
   return null;
 };
 
-const paddEmptyElement = function (editor: Editor) {
+const paddEmptyElement = function (editor) {
   let br;
   const ceRoot = getContentEditableRoot(editor.getBody(), editor.selection.getNode());
 
@@ -94,7 +93,7 @@ const paddEmptyElement = function (editor: Editor) {
   return true;
 };
 
-const backspaceDelete = function (editor: Editor, forward) {
+const backspaceDelete = function (editor, forward) {
   if (editor.selection.isCollapsed()) {
     return backspaceDeleteCaret(editor, forward);
   } else {
